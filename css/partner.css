@@ -1,0 +1,233 @@
+.partner-hero {
+    background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.8)), url('../images/partner-hero.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 100px 0;
+    text-align: center;
+}
+
+.partner-hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.partner-hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.benefits {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+}
+
+.benefits h2,
+.how-it-works h2,
+.pricing h2 {
+    text-align: center;
+    margin-bottom: 50px;
+    font-size: 2rem;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.benefit-card {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+.benefit-card:hover {
+    transform: translateY(-5px);
+}
+
+.benefit-icon {
+    width: 70px;
+    height: 70px;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.benefit-icon i {
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+.benefit-card h3 {
+    margin-bottom: 15px;
+}
+
+.how-it-works {
+    padding: 80px 0;
+}
+
+.steps {
+    display: flex;
+    justify-content: space-between;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.step {
+    text-align: center;
+    flex: 1;
+    padding: 0 20px;
+    position: relative;
+}
+
+.step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 40px;
+    right: -50px;
+    width: 100px;
+    height: 2px;
+    background-color: #eee;
+}
+
+.step-number {
+    width: 50px;
+    height: 50px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto 20px;
+}
+
+.pricing {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+}
+
+.pricing-cards {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.pricing-card {
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    flex: 1;
+    max-width: 350px;
+    position: relative;
+}
+
+.pricing-card.featured {
+    transform: scale(1.05);
+    border: 2px solid var(--primary-color);
+}
+
+.featured-label {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--primary-color);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.pricing-card h3 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.price {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.price .amount {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.price .period {
+    color: #777;
+}
+
+.features {
+    margin-bottom: 30px;
+}
+
+.features li {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.features li i {
+    color: var(--success-color);
+    margin-right: 10px;
+}
+
+.contact-cta {
+    padding: 80px 0;
+    text-align: center;
+    background-color: white;
+}
+
+.contact-cta h2 {
+    margin-bottom: 15px;
+}
+
+.contact-cta p {
+    margin-bottom: 30px;
+    color: #777;
+}
+
+@media (max-width: 992px) {
+    .benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .steps {
+        flex-direction: column;
+        gap: 40px;
+    }
+    
+    .step:not(:last-child)::after {
+        display: none;
+    }
+    
+    .pricing-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .pricing-card.featured {
+        transform: none;
+    }
+}

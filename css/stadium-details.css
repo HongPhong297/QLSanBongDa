@@ -1,0 +1,358 @@
+.stadium-details {
+    padding: 40px 0;
+}
+
+.breadcrumb {
+    margin-bottom: 30px;
+    color: #777;
+}
+
+.breadcrumb a {
+    color: #777;
+    margin-right: 5px;
+}
+
+.breadcrumb a:hover {
+    color: var(--primary-color);
+}
+
+.stadium-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.stadium-images {
+    position: relative;
+}
+
+.main-image {
+    height: 400px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-thumbnails {
+    display: flex;
+    gap: 10px;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 60px;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: var(--transition);
+}
+
+.thumbnail.active,
+.thumbnail:hover {
+    opacity: 1;
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stadium-info h1 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.stadium-meta {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.stars {
+    color: #f39c12;
+    margin-right: 5px;
+}
+
+.location {
+    display: flex;
+    align-items: center;
+    color: #777;
+}
+
+.location i {
+    margin-right: 5px;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.stadium-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.stadium-tabs {
+    display: flex;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 30px;
+}
+
+.tab-btn {
+    padding: 15px 25px;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    color: #777;
+    transition: var(--transition);
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+}
+
+.tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.tab-btn.active::after {
+    width: 100%;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.stadium-description,
+.facilities,
+.rules {
+    margin-bottom: 30px;
+}
+
+.facilities-list,
+.rules-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.facilities-list li,
+.rules-list li {
+    display: flex;
+    align-items: center;
+}
+
+.facilities-list li i,
+.rules-list li i {
+    margin-right: 10px;
+    color: var(--primary-color);
+}
+
+/* Booking section */
+.booking-container {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: var(--box-shadow);
+}
+
+.date-picker {
+    margin-bottom: 30px;
+}
+
+.time-slots-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.time-slot {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.time-slot.available {
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+.time-slot.unavailable {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #777;
+    cursor: not-allowed;
+}
+
+.time-slot.selected {
+    border-color: var(--primary-color);
+    background-color: rgba(52, 152, 219, 0.1);
+}
+
+.booking-form {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid #eee;
+}
+
+.booking-summary {
+    background: #f9f9f9;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.booking-details {
+    margin-top: 15px;
+}
+
+.booking-details p {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.payment-options {
+    margin-bottom: 20px;
+}
+
+.payment-method {
+    margin-bottom: 10px;
+}
+
+/* Reviews Section */
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.review-form-container {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: var(--box-shadow);
+}
+
+.rating-select {
+    font-size: 1.5rem;
+    color: #f39c12;
+    margin-bottom: 15px;
+}
+
+.rating-select i {
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.reviews-summary {
+    margin-bottom: 30px;
+    display: flex;
+    gap: 30px;
+}
+
+.average-rating {
+    font-size: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 700;
+    color: var(--secondary-color);
+}
+
+.review-list .review {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--box-shadow);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.reviewer-name {
+    font-weight: 600;
+}
+
+.review-date {
+    color: #777;
+    font-size: 0.9rem;
+}
+
+.review-rating {
+    margin-bottom: 10px;
+    color: #f39c12;
+}
+
+.review-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* Location Tab */
+#map {
+    height: 400px;
+    border-radius: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .stadium-header {
+        grid-template-columns: 1fr;
+    }
+    
+    .facilities-list,
+    .rules-list,
+    .time-slots-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stadium-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .tab-btn {
+        padding: 10px 15px;
+    }
+}

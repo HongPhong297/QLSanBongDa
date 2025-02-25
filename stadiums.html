@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Stadiums - StadiumFinder</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/stadiums.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header id="main-header">
+        <div class="container">
+            <div class="logo">
+                <h1>StadiumFinder</h1>
+            </div>
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="stadiums.html" class="active">Find Stadium</a></li>
+                    <li><a href="partner.html">Partner With Us</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="login.html" class="btn btn-primary">Login</a></li>
+                    <li><a href="register.html" class="btn">Register</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <section class="search-section">
+        <div class="container">
+            <h2>Find Your Perfect Stadium</h2>
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="location-search" placeholder="Enter location...">
+                    <button id="use-current-location" class="btn btn-secondary">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </button>
+                    <button id="search-btn" class="btn btn-primary">Search</button>
+                </div>
+                <div class="filter-options">
+                    <div class="filter-group">
+                        <label for="district">District</label>
+                        <select id="district">
+                            <option value="">All Districts</option>
+                            <!-- Districts will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sport-type">Sport Type</label>
+                        <select id="sport-type">
+                            <option value="">All Sports</option>
+                            <option value="football">Football</option>
+                            <option value="basketball">Basketball</option>
+                            <option value="tennis">Tennis</option>
+                            <option value="volleyball">Volleyball</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="price-range">Price Range</label>
+                        <select id="price-range">
+                            <option value="">Any Price</option>
+                            <option value="0-50">Under $50/hr</option>
+                            <option value="50-100">$50 - $100/hr</option>
+                            <option value="100-200">$100 - $200/hr</option>
+                            <option value="200+">$200+/hr</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date">
+                    </div>
+                    <button id="filter-btn" class="btn btn-secondary">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="results-section">
+        <div class="container">
+            <div class="results-header">
+                <h3>Results</h3>
+                <div class="sort-options">
+                    <label for="sort-by">Sort by:</label>
+                    <select id="sort-by">
+                        <option value="distance">Distance</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="rating">Rating</option>
+                    </select>
+                </div>
+            </div>
+            <div id="results-count">Showing 0 stadiums</div>
+            <div id="stadium-results" class="stadium-grid">
+                <!-- Stadium results will be populated dynamically -->
+                <div class="loading">Searching for stadiums...</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>StadiumFinder</h3>
+                    <p>Find and book sports venues easily</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="stadiums.html">Find Stadium</a></li>
+                        <li><a href="partner.html">Partner With Us</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Email: info@stadiumfinder.com</p>
+                    <p>Phone: +1 234 567 890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 StadiumFinder. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./js/main.js" type="module"></script>
+    <script src="./js/stadiums.js" type="module"></script>
+</body>
+</html>

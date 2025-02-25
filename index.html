@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StadiumFinder - Book Sports Venues</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/home.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header id="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html" class="logo-link">
+                    <h1>StadiumFinder</h1>
+                </a>
+            </div>
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="stadiums.html">Find Stadium</a></li>
+                    <li><a href="partner.html">Partner With Us</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="login.html" class="btn btn-primary">Login</a></li>
+                    <li><a href="register.html" class="btn">Register</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Find and Book the Perfect Stadium</h1>
+                <p>Discover sports venues near you and book your next game instantly</p>
+                <div class="search-box">
+                    <input type="text" placeholder="Enter your location...">
+                    <button class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Find</h3>
+                    <p>Search stadiums by location and filter by facilities</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Book</h3>
+                    <p>Select your preferred time slot and book instantly</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <h3>Play</h3>
+                    <p>Enjoy your game at your chosen stadium</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="featured-stadiums">
+        <div class="container">
+            <h2>Featured Stadiums</h2>
+            <div class="stadiums-grid" id="featured-stadiums">
+                <!-- Stadiums will be loaded dynamically via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>StadiumFinder</h3>
+                    <p>Find and book sports venues easily</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="stadiums.html">Find Stadium</a></li>
+                        <li><a href="partner.html">Partner With Us</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Email: info@stadiumfinder.com</p>
+                    <p>Phone: +1 234 567 890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 StadiumFinder. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./js/main.js" type="module"></script>
+    <script src="./js/home.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+.search-section {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 40px 0;
+}
+
+.search-section h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.search-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--box-shadow);
+}
+
+.search-box {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    font-size: 1rem;
+}
+
+.search-box #use-current-location {
+    padding: 0 15px;
+    border-radius: 0;
+}
+
+.search-box #search-btn {
+    padding: 0 25px;
+    border-radius: 0 4px 4px 0;
+}
+
+.filter-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) auto;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.filter-group label {
+    color: var(--dark-color);
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.filter-group select, 
+.filter-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.results-section {
+    padding: 40px 0;
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sort-options {
+    display: flex;
+    align-items: center;
+}
+
+.sort-options label {
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.sort-options select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#results-count {
+    margin-bottom: 20px;
+    color: #777;
+}
+
+.stadium-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.loading {
+    text-align: center;
+    padding: 50px 0;
+    grid-column: 1 / -1;
+    color: #777;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .filter-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stadium-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .filter-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .stadium-grid {
+        grid-template-columns: 1fr;
+    }
+}
