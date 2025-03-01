@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - StadiumFinder</title>
-    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/style.css">  
     <link rel="stylesheet" href="./css/about.css">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
@@ -14,21 +14,26 @@
             <div class="logo">
                 <a href="index.html" class="logo-link">
                     <h1>StadiumFinder</h1>
-                </a>
+                </a>    
             </div>
-            <nav id="main-nav">
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="stadiums.html">Find Stadium</a></li>
-                    <li><a href="partner.html">Partner With Us</a></li>
-                    <li><a href="about.html" class="active">About</a></li>
-                    <li><a href="login.html" class="btn btn-primary">Login</a></li>
-                    <li><a href="register.html" class="btn">Register</a></li>
+            <!-- <nav id="main-nav"> -->
+               <div >
+                <ul class="navigation">
+                    <li  class="hover-underline-animation center"><a href="index.html">Home</a></li>
+                    <li class="hover-underline-animation center"><a href="stadiums.html">Find Stadium</a></li>
+                    <li class="hover-underline-animation center"><a href="partner.html">Partner With Us</a></li>
+                    <li class="hover-underline-animation center"><a href="about.html" class="active">About</a></li>
                 </ul>
-            </nav>
-            <div class="menu-toggle">
-                <i class="fas fa-bars"></i>
-            </div>
+               </div>
+                <div >
+                <ul class="auth">
+                    <li><a href="login.html" class="btn btn-primary btn-css">Login</a></li>
+                    <li><a href="register.html" class="btn btn-css">Register</a></li>
+                </ul></div>
+            <!-- </nav> -->
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
         </div>
     </header>
 
@@ -48,7 +53,7 @@
                     <p>Our mission is to promote sports and active lifestyles by making venue booking simple, transparent, and accessible to everyone.</p>
                 </div>
                 <div class="story-image">
-                    <img src="images/about-story.jpg" alt="StadiumFinder Story">
+                    <img src="https://www.barcelo.com/guia-turismo/wp-content/uploads/2019/03/santiago-bernabeu-1.jpg" alt="StadiumFinder Story">
                 </div>
             </div>
         </div>
@@ -83,7 +88,7 @@
             <div class="team-grid">
                 <div class="team-member">
                     <div class="member-image">
-                        <img src="images/team/member1.jpg" alt="Team Member">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFc0Cry8E_MF-5Qkl5umnXnZ77LI0B8tYKTn-nIG48KTFKnzxLHhIP2Usqb8Hsq0ERpH8_pM0M06a1kB-A0CToMw" alt="Team Member">
                     </div>
                     <h3>John Smith</h3>
                     <p class="position">CEO & Founder</p>
@@ -91,7 +96,7 @@
                 </div>
                 <div class="team-member">
                     <div class="member-image">
-                        <img src="images/team/member2.jpg" alt="Team Member">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqZ5pVmRYPXKCOFAHDoEqkd3fiHJD6YZz-mgZ52YSTlLPRIE67uv9qjHGtdasC4ySrdbM&usqp=CAU" alt="Team Member">
                     </div>
                     <h3>Sarah Johnson</h3>
                     <p class="position">Operations Director</p>
@@ -99,7 +104,7 @@
                 </div>
                 <div class="team-member">
                     <div class="member-image">
-                        <img src="images/team/member3.jpg" alt="Team Member">
+                        <img src="https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcSC6oYQ7-Vo9shrfuxIE4TM4IxWNx8K1cGXah746e1sQwChb0zSwt9zfiI6yCqhvOjHa7g61bzeFuSm5-o" alt="Team Member">
                     </div>
                     <h3>Michael Chen</h3>
                     <p class="position">Tech Lead</p>
@@ -169,7 +174,7 @@
                         <div class="form-group">
                             <textarea placeholder="Your Message" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Send Message</button>
+                        <button type="submit" class="btn btn-primary cta-button">Send Message</button>
                     </form>
                 </div>
             </div>

@@ -66,9 +66,17 @@
 
 .remember-forgot {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-between; 
     font-size: 0.9rem;
+}
+.remember-me{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+.remember-me input {
+    margin-right: 10px;
 }
 
 .terms {

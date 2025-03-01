@@ -203,6 +203,16 @@
     resize: vertical;
 }
 
+/* Add styling for the larger centered button */
+.cta-button {
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    text-align: center;
+    display: inline-block;
+    min-width: 200px;
+    font-weight: 500;
+}
+
 @media (max-width: 992px) {
     .story-content,
     .values-grid {
@@ -229,3 +239,32 @@
         font-size: 2rem;
     }
 }
+/* -------------------------------- */
+.hover-underline-animation {
+    display: inline-block;
+    position: relative;
+}
+
+.hover-underline-animation::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #0087ca;
+    transition: transform 0.25s ease-out;
+}
+
+.hover-underline-animation:hover::after {
+    transform: scaleX(1);
+}
+.hover-underline-animation.center::after {
+    transform-origin: bottom center;
+}
+
+.hover-underline-animation.center:hover::after {
+    transform-origin: bottom center;
+}
+/* -------------------------------- */

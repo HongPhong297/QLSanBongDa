@@ -55,7 +55,51 @@ ul {
     align-items: center;
     padding: 15px 20px;
 }
-
+#main-header .navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  
+}
+#main-header .navigation li {
+    margin-right: 40px;
+    font-size: 20px ;
+    color: black;
+}
+#main-header .navigation li a {
+    color: black;
+    transition: 0.2s;
+    text-decoration: none;
+}   
+#main-header .navigation li a:hover {
+    color: var(--primary-color);
+  
+}
+#main-header  .auth{
+    display: flex;
+    align-items: center;
+    
+}
+#main-header .auth li {
+    margin-right: 20px;
+    font-size: 20px ; 
+}
+#main-header .auth li a{
+    text-decoration: none;
+}
+#main-header  .auth .btn-css:hover{
+    background-color: rgb(57, 57, 97);
+    text-decoration: underline;
+}
+#main-header  .auth li:first-child {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: 0.2s;
+    cursor: pointer;
+}
 .logo h1 {
     font-size: 1.8rem;
     font-weight: 700;
@@ -66,6 +110,7 @@ ul {
     text-decoration: none;
     display: block;
     transition: var(--transition);
+    border-radius: 4px;
 }
 
 .logo-link:hover {
@@ -89,9 +134,10 @@ ul {
 #main-nav a {
     color: var(--dark-color);
     font-weight: 500;
-    padding: 8px 0;
+    padding: 10px 20px;
     transition: var(--transition);
     position: relative;
+   
 }
 
 #main-nav a:not(.btn)::after {
@@ -110,8 +156,9 @@ ul {
     width: 100%;
 }
 
+
 .btn {
-    padding: 8px 20px;
+    padding: 10 px 20px;
     border-radius: 4px;
     font-weight: 500;
     cursor: pointer;
@@ -123,6 +170,7 @@ ul {
 .btn-primary {
     background-color: var(--primary-color);
     color: white !important;
+   
 }
 
 .btn-secondary {
@@ -152,6 +200,7 @@ ul {
     display: block;
     width: 100%;
     text-align: center;
+    padding: 10px 20px;
 }
 
 .menu-toggle {
@@ -166,10 +215,11 @@ ul {
 }
 
 .form-group label {
-    display: block;
+    display: inline-block;
     margin-bottom: 8px;
     font-weight: 500;
 }
+
 
 .form-group input,
 .form-group select,
@@ -190,6 +240,16 @@ ul {
     box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
+.terms {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    margin-bottom: 20px;
+    width: 100%;
+}
+.terms input {
+    margin-right: 15px;
+}
 .error-message {
     color: var(--danger-color);
     margin-bottom: 15px;

@@ -64,6 +64,15 @@
     border-radius: 4px;
 }
 
+/* Added styling for the filter button */
+#filter-btn {
+    padding: 12px 30px;
+    text-align: center;
+    font-weight: 500;
+    min-width: 160px;
+    height: auto;
+}
+
 .results-section {
     padding: 40px 0;
 }
