@@ -70,6 +70,13 @@
     margin: 0 auto 20px;
 }
 
+/* Replace the Font Awesome icon styling with image styling */
+.benefit-icon .benefit-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
 .benefit-icon i {
     font-size: 2rem;
     color: var(--primary-color);
