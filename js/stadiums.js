@@ -1,6 +1,7 @@
 // Stadium search and listing functionality
 
 import { showNotification, formatCurrency, generateStarRating } from './main.js';
+import { getSafeImageUrl, preloadPlaceholderImage } from './imageLoader.js';
 
 // DOM Elements
 const searchBtn = document.getElementById('search-btn');
@@ -15,6 +16,65 @@ const sortBySelect = document.getElementById('sort-by');
 const resultsCount = document.getElementById('results-count');
 const stadiumResults = document.getElementById('stadium-results');
 
+// API endpoint
+const API_URL = 'http://localhost:3000/api/stadiums';
+
+// Fallback stadium data in case the API is not available
+let fallbackStadiums = [
+    {
+        "id": 1,
+        "owner_id": 1,
+        "name": "San Van Dong A",
+        "description": "San co chat luong cao",
+        "location": "456 Duong XYZ, Quan 3",
+        "district": "Quan 3",
+        "price": "500000.00",
+        "capacity": 100,
+        "sport_type": "football",
+        "is_active": true,
+        "featured": false
+    },
+    {
+        "id": 2,
+        "owner_id": 1,
+        "name": "San Van Dong B",
+        "description": "San nho phu hop cho nhom ban be",
+        "location": "123 Duong ABC, Quan 1",
+        "district": "Quan 1",
+        "price": "350000.00",
+        "capacity": 50,
+        "sport_type": "basketball",
+        "is_active": true,
+        "featured": true
+    },
+    {
+        "id": 3,
+        "owner_id": 2,
+        "name": "San Tennis Quan 7",
+        "description": "San tennis chat luong cao",
+        "location": "789 Duong DEF, Quan 7",
+        "district": "Quan 7",
+        "price": "200000.00",
+        "capacity": 4,
+        "sport_type": "tennis",
+        "is_active": true,
+        "featured": false
+    },
+    {
+        "id": 4,
+        "owner_id": 2,
+        "name": "San Tennis Thu Duc",
+        "description": "San tennis chat luong cao",
+        "location": "789 Duong DEF, Thu Duc",
+        "district": "Thu Duc",
+        "price": "10",
+        "capacity": 4,
+        "sport_type": "tennis",
+        "is_active": true,
+        "featured": false
+    }
+];
+
 // Current search state
 let currentSearchState = {
     location: '',
@@ -27,6 +87,9 @@ let currentSearchState = {
 
 // Initialize stadium search
 function initStadiumSearch() {
+    // Preload placeholder image
+    preloadPlaceholderImage();
+    
     // Add event listeners
     if (searchBtn) {
         searchBtn.addEventListener('click', performSearch);
@@ -53,8 +116,8 @@ function initStadiumSearch() {
         dateSelect.min = today;
     }
     
-    // Populate districts (would come from API in a real app)
-    populateDistricts();
+    // Populate districts dynamically based on API data
+    fetchDistrictsFromAPI();
     
     // Check if we should load all stadiums initially or perform search from URL params
     const urlParams = new URLSearchParams(window.location.search);
@@ -74,6 +137,124 @@ function initStadiumSearch() {
     }
 }
 
+// Fetch districts from API data
+// async function fetchDistrictsFromAPI() {
+//     if (!districtSelect) return;
+    
+//     try {
+//         const response = await fetch(API_URL);
+//         if (!response.ok) {
+//             throw new Error('Failed to fetch stadiums data');
+//         }
+//         const stadiums = await response.json();
+        
+//         // Extract unique districts
+//         const districts = [...new Set(stadiums.map(stadium => stadium.district).filter(Boolean))];
+        
+//         // Populate districts dropdown
+//         districtSelect.innerHTML = '<option value="">All Districts</option>';
+//         districts.forEach(district => {
+//             const option = document.createElement('option');
+//             option.value = district.toLowerCase();
+//             option.textContent = district;
+//             districtSelect.appendChild(option);
+//         });
+//     } catch (error) {
+//         console.error('Error fetching districts:', error);
+//         // Use fallback data
+//         const districts = [...new Set(fallbackStadiums.map(stadium => stadium.district).filter(Boolean))];
+        
+//         // Populate districts dropdown
+//         districtSelect.innerHTML = '<option value="">All Districts</option>';
+//         districts.forEach(district => {
+//             const option = document.createElement('option');
+//             option.value = district.toLowerCase();
+//             option.textContent = district;
+//             districtSelect.appendChild(option);
+//         });
+//     }
+// }
+// Fetch districts from API data with improved error handling
+async function fetchDistrictsFromAPI() {
+    if (!districtSelect) return;
+    
+    console.log('Attempting to fetch districts from API:', API_URL);
+    
+    try {
+        // Cố gắng kết nối tới API với timeout và gỡ lỗi
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+            controller.abort();
+            throw new Error('Request timeout after 5 seconds');
+        }, 5000);
+        
+        // Loại bỏ headers tùy chỉnh và sử dụng cấu hình cơ bản
+        const response = await fetch(API_URL, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        
+        console.log('API response received:', response.status, response.statusText);
+        
+        if (!response.ok) {
+            throw new Error(`Failed to fetch stadiums data: ${response.status} ${response.statusText}`);
+        }
+        
+        const stadiums = await response.json();
+        console.log('Stadiums data received:', stadiums.length, 'items');
+        
+        // Extract unique districts
+        const districts = [...new Set(stadiums.map(stadium => stadium.district).filter(Boolean))];
+        console.log('Extracted districts:', districts);
+        
+        if (districts.length === 0) {
+            console.warn('No districts found in API data, using fallback');
+            throw new Error('No districts found in data');
+        }
+        
+        // Populate districts dropdown
+        districtSelect.innerHTML = '<option value="">All Districts</option>';
+        districts.forEach(district => {
+            const option = document.createElement('option');
+            option.value = district.toLowerCase();
+            option.textContent = district;
+            districtSelect.appendChild(option);
+        });
+        
+        console.log('Districts dropdown populated successfully');
+        
+    } catch (error) {
+        console.error('Error fetching districts:', error);
+        
+        // Thêm chẩn đoán lỗi chi tiết
+        if (error.name === 'AbortError') {
+            console.warn('Request timed out - server might be slow or unreachable');
+        } else if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+            console.warn('Network error - possible CORS issue or server unreachable');
+            
+            // Kiểm tra xem có phải localhost không và hiển thị lời khuyên
+            if (API_URL.includes('localhost')) {
+                console.info('API URL is localhost - check if server is running on correct port');
+                console.info('Try opening API URL directly in browser:', API_URL);
+            }
+        }
+        
+        // Use fallback data
+        const districts = [...new Set(fallbackStadiums.map(stadium => stadium.district).filter(Boolean))];
+        
+        // Populate districts dropdown
+        districtSelect.innerHTML = '<option value="">All Districts</option>';
+        districts.forEach(district => {
+            const option = document.createElement('option');
+            option.value = district.toLowerCase();
+            option.textContent = district;
+            districtSelect.appendChild(option);
+        });
+        
+        console.log('Populated districts dropdown with fallback data');
+        
+        // Hiển thị thông báo rõ ràng cho người dùng
+        showNotification('Đang sử dụng dữ liệu mẫu. Không thể kết nối tới API.', 'warning');
+    }
+}
 // Get user's location
 function getUserLocation() {
     if (navigator.geolocation) {
@@ -99,20 +280,6 @@ function getUserLocation() {
     }
 }
 
-// Populate district select element
-function populateDistricts() {
-    if (!districtSelect) return;
-    
-    const districts = ['Downtown', 'Westside', 'Eastville', 'Northpark', 'South Bay'];
-    
-    districts.forEach(district => {
-        const option = document.createElement('option');
-        option.value = district.toLowerCase();
-        option.textContent = district;
-        districtSelect.appendChild(option);
-    });
-}
-
 // Perform stadium search
 function performSearch() {
     if (!stadiumResults) return;
@@ -125,11 +292,10 @@ function performSearch() {
     // Show loading indicator
     stadiumResults.innerHTML = '<div class="loading">Searching for stadiums...</div>';
     
-    // In a real app, we would fetch data from an API
-    // For the demo, simulate network delay and filter the stadiums
+    // Fetch from API with a slight delay to show loading state
     setTimeout(() => {
         fetchStadiums();
-    }, 1000);
+    }, 500);
 }
 
 // Apply filter options
@@ -154,17 +320,18 @@ function sortResults() {
     // Sort based on selected option
     switch (currentSearchState.sortBy) {
         case 'price-low':
-            stadiums.sort((a, b) => a.price - b.price);
+            stadiums.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
             break;
         case 'price-high':
-            stadiums.sort((a, b) => b.price - a.price);
+            stadiums.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
             break;
         case 'rating':
-            stadiums.sort((a, b) => b.rating - a.rating);
+            // Since the API doesn't seem to provide ratings, fall back to sorting by name
+            stadiums.sort((a, b) => a.name.localeCompare(b.name));
             break;
         case 'distance':
         default:
-            // For demo, simply sort by name
+            // Sort by name as a fallback
             stadiums.sort((a, b) => a.name.localeCompare(b.name));
             break;
     }
@@ -186,34 +353,296 @@ function fetchStadiumsFromDOM() {
             price: parseFloat(card.dataset.price),
             rating: parseFloat(card.dataset.rating),
             image: card.querySelector('img').src,
-            sportType: card.dataset.sportType
+            sport_type: card.dataset.sportType
         });
     });
     
     return stadiums;
 }
 
-// Fetch stadiums from local storage
+// Fetch stadiums from API with better error handling
+// async function fetchStadiums() {
+//     try {
+//         // Show loading state first
+//         if (stadiumResults) {
+//             stadiumResults.innerHTML = '<div class="loading">Loading stadiums...</div>';
+//         }
+        
+//         console.log('Fetching stadiums from API:', API_URL);
+        
+//         let stadiums = [];
+        
+//         try {
+//             // Add longer timeout and better error handling
+//             const controller = new AbortController();
+//             const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+            
+//             const response = await fetch(API_URL, {
+//                 method: 'GET',
+//                 headers: {
+//                     'Accept': 'application/json',
+//                     'Content-Type': 'application/json'
+//                 },
+//                 signal: controller.signal
+//             });
+            
+//             clearTimeout(timeoutId);
+            
+//             console.log("Response status:", response.status, response.statusText);
+            
+//             if (!response.ok) {
+//                 throw new Error(`Failed to fetch stadiums: ${response.status} ${response.statusText}`);
+//             }
+            
+//             // Try to get the raw response text first for debugging
+//             try {
+//                 const responseText = await response.text();
+//                 console.log("Raw response:", responseText);
+                
+//                 // Now parse the JSON
+//                 if (responseText.trim()) {
+//                     stadiums = JSON.parse(responseText);
+//                     console.log('Received stadiums from API:', stadiums);
+                    
+//                     if (stadiums && stadiums.length > 0) {
+//                         // If we got to this point with actual data, it was successful
+//                         showNotification('Successfully loaded stadiums from API', 'success');
+//                     } else {
+//                         console.warn('API returned empty stadiums array');
+//                         showNotification('API returned no stadiums', 'warning');
+//                     }
+//                 } else {
+//                     console.warn('API returned empty response');
+//                     throw new Error('Empty response from API');
+//                 }
+//             } catch (parseError) {
+//                 console.error('Error parsing JSON:', parseError);
+//                 throw new Error('Invalid JSON response from API');
+//             }
+//         } catch (apiError) {
+//             console.warn('API fetch failed, using fallback data:', apiError);
+            
+//             // Show a detailed notification with error info and advice
+//             let errorMessage = 'Using demo data as API connection failed. ';
+            
+//             if (apiError.name === 'AbortError') {
+//                 errorMessage += 'The request timed out. Server may be slow or unreachable.';
+//             } else if (apiError.message.includes('Failed to fetch')) {
+//                 errorMessage += 'Server may not be running. Check server status and CORS settings.';
+//             } else {
+//                 errorMessage += apiError.message;
+//             }
+            
+//             showNotification(errorMessage, 'warning');
+            
+//             // Add a troubleshooting link
+//             const troubleshootLink = document.createElement('div');
+//             troubleshootLink.innerHTML = `
+//                 <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; text-align: center;">
+//                     <p>API connection issue detected</p>
+//                     <a href="server-status.html" class="btn btn-secondary" target="_blank">Troubleshoot Connection</a>
+//                 </div>
+//             `;
+            
+//             if (stadiumResults) {
+//                 stadiumResults.prepend(troubleshootLink);
+//             }
+            
+//             // Use fallback data
+//             stadiums = [...fallbackStadiums];
+//             console.log('Using fallback data:', stadiums);
+//         }
+        
+//         if (!Array.isArray(stadiums)) {
+//             console.error('API response is not an array:', stadiums);
+//             stadiums = [...fallbackStadiums];
+//         }
+        
+//         // Apply filters
+//         const filteredStadiums = applySearchFilters(stadiums);
+//         console.log('Filtered stadiums:', filteredStadiums);
+        
+//         // Render results
+//         renderStadiums(filteredStadiums);
+//     } catch (error) {
+//         console.error('Error fetching stadiums:', error);
+//         // Use fallback data in case of any error
+//         const filteredStadiums = applySearchFilters(fallbackStadiums);
+//         renderStadiums(filteredStadiums);
+//     }
+// }
+// Fetch stadiums from API with better error handling
+// Fetch stadiums from API with extensive debugging
 async function fetchStadiums() {
-    // Get stadiums from localStorage (in a real app, would fetch from API)
-    let stadiums = JSON.parse(localStorage.getItem('stadiums') || '[]');
-    
-    // Apply filters
-    stadiums = applySearchFilters(stadiums);
-    
-    // Render results
-    renderStadiums(stadiums);
+    try {
+        // Show loading state first
+        if (stadiumResults) {
+            stadiumResults.innerHTML = '<div class="loading">Loading stadiums...</div>';
+        }
+        
+        console.log('Fetching stadiums from API:', API_URL);
+        
+        let stadiums = [];
+        
+        try {
+            // Thiết lập các tùy chọn fetch cơ bản - không có headers tùy chỉnh
+            const fetchOptions = {
+                method: 'GET',
+                mode: 'cors', // Thử với mode cors rõ ràng
+                cache: 'no-cache' // Tránh cache
+            };
+            
+            console.log('Fetch options:', fetchOptions);
+            
+            // Thử fetch API với tùy chọn cơ bản
+            const response = await fetch(API_URL, fetchOptions);
+            
+            console.log("Response status:", response.status);
+            console.log("Response headers:", response.headers);
+            console.log("Response type:", response.type);
+            
+            if (!response.ok) {
+                throw new Error(`Failed to fetch stadiums: ${response.status} ${response.statusText}`);
+            }
+            
+            try {
+                // Thử lấy dữ liệu dưới dạng text trước để debug
+                const textResponse = await response.clone().text();
+                console.log("Raw response text (first 200 chars):", textResponse.substring(0, 200));
+                
+                // Sau đó thử phân tích JSON
+                stadiums = await response.json();
+                console.log('Parsed JSON data (first 2 items):', stadiums.slice(0, 2));
+                
+                if (stadiums && stadiums.length > 0) {
+                    showNotification('Successfully loaded stadiums from API', 'success');
+                } else {
+                    console.warn('API returned empty stadiums array');
+                    showNotification('API returned no stadiums', 'warning');
+                    stadiums = [...fallbackStadiums];
+                }
+            } catch (parseError) {
+                console.error('JSON parse error:', parseError);
+                throw new Error(`Failed to parse JSON: ${parseError.message}`);
+            }
+        } catch (apiError) {
+            console.error('API error details:', {
+                name: apiError.name,
+                message: apiError.message,
+                stack: apiError.stack
+            });
+            
+            // Kiểm tra xem có phải lỗi CORS không
+            if (apiError.message.includes('CORS') || 
+                apiError.message.includes('cross-origin') || 
+                apiError.message.includes('Cross-Origin')) {
+                
+                showNotification('CORS error detected. Server may not allow browser requests.', 'error');
+                
+                // Add CORS-specific troubleshooting
+                const corsHelp = document.createElement('div');
+                corsHelp.innerHTML = `
+                    <div style="margin-top: 10px; padding: 10px; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 4px;">
+                        <h4>CORS Error Detected</h4>
+                        <p>This is likely because the API server doesn't allow requests from your browser. Solutions:</p>
+                        <ol>
+                            <li>Ensure the API server has CORS headers enabled</li>
+                            <li>Try using a CORS proxy for testing</li>
+                            <li>Access the application from the same origin as the API</li>
+                        </ol>
+                        <div class="mt-2">
+                            <button id="try-cors-proxy" class="btn btn-warning">Try using CORS Proxy</button>
+                        </div>
+                    </div>
+                `;
+                
+                if (stadiumResults) {
+                    stadiumResults.prepend(corsHelp);
+                }
+                
+                // Add CORS proxy functionality
+                setTimeout(() => {
+                    const proxyBtn = document.getElementById('try-cors-proxy');
+                    if (proxyBtn) {
+                        proxyBtn.addEventListener('click', tryWithCorsProxy);
+                    }
+                }, 100);
+            } else {
+                showNotification(`API error: ${apiError.message}`, 'error');
+            }
+            
+            // Sử dụng dữ liệu dự phòng
+            stadiums = [...fallbackStadiums];
+            console.log('Using fallback data:', stadiums);
+        }
+        
+        if (!Array.isArray(stadiums)) {
+            console.error('API response is not an array:', stadiums);
+            stadiums = [...fallbackStadiums];
+        }
+        
+        // Áp dụng bộ lọc
+        const filteredStadiums = applySearchFilters(stadiums);
+        console.log('Filtered stadiums:', filteredStadiums);
+        
+        // Hiển thị kết quả
+        renderStadiums(filteredStadiums);
+    } catch (error) {
+        console.error('Overall error:', error);
+        // Sử dụng dữ liệu dự phòng trong trường hợp xảy ra lỗi
+        const filteredStadiums = applySearchFilters(fallbackStadiums);
+        renderStadiums(filteredStadiums);
+    }
 }
 
-// Load all stadiums when page initially loads without search
+// Function to try fetching with a CORS proxy
+async function tryWithCorsProxy() {
+    try {
+        // Using a public CORS proxy (for testing only)
+        const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+        const proxyUrl = CORS_PROXY + API_URL;
+        
+        console.log('Trying with CORS proxy:', proxyUrl);
+        document.getElementById('try-cors-proxy').textContent = 'Trying...';
+        
+        const response = await fetch(proxyUrl);
+        if (!response.ok) {
+            throw new Error(`Proxy request failed: ${response.status}`);
+        }
+        
+        const stadiums = await response.json();
+        
+        if (stadiums && stadiums.length > 0) {
+            showNotification('Successfully loaded stadiums via CORS proxy!', 'success');
+            console.log('Received stadiums via proxy:', stadiums);
+            
+            // Render the stadiums
+            const filteredStadiums = applySearchFilters(stadiums);
+            renderStadiums(filteredStadiums);
+            
+            // Update button
+            document.getElementById('try-cors-proxy').textContent = 'Success! Loaded via Proxy';
+            document.getElementById('try-cors-proxy').classList.remove('btn-warning');
+            document.getElementById('try-cors-proxy').classList.add('btn-success');
+        } else {
+            throw new Error('No stadiums data received from proxy');
+        }
+    } catch (error) {
+        console.error('CORS proxy error:', error);
+        showNotification(`CORS proxy error: ${error.message}`, 'error');
+        document.getElementById('try-cors-proxy').textContent = 'Proxy Failed - Try Again';
+    }
+}
+// Load all stadiums when page initially loads
 function loadAllStadiums() {
     if (!stadiumResults) return;
     
     stadiumResults.innerHTML = '<div class="loading">Loading stadiums...</div>';
     
+    // Small delay to show loading state
     setTimeout(() => {
         fetchStadiums();
-    }, 500);
+    }, 300);
 }
 
 // Apply search filters to stadium data
@@ -223,14 +652,14 @@ function applySearchFilters(stadiums) {
     // Filter by sport type
     if (currentSearchState.sportType) {
         filteredStadiums = filteredStadiums.filter(
-            stadium => stadium.sportType === currentSearchState.sportType
+            stadium => stadium.sport_type && stadium.sport_type.toLowerCase() === currentSearchState.sportType.toLowerCase()
         );
     }
     
-    // Filter by district (from location)
+    // Filter by district
     if (currentSearchState.district) {
         filteredStadiums = filteredStadiums.filter(
-            stadium => stadium.location.toLowerCase().includes(currentSearchState.district.toLowerCase())
+            stadium => stadium.district && stadium.district.toLowerCase().includes(currentSearchState.district.toLowerCase())
         );
     }
     
@@ -238,8 +667,8 @@ function applySearchFilters(stadiums) {
     if (currentSearchState.location && currentSearchState.location !== 'Current Location') {
         const searchTerm = currentSearchState.location.toLowerCase();
         filteredStadiums = filteredStadiums.filter(
-            stadium => stadium.location.toLowerCase().includes(searchTerm) || 
-                        stadium.name.toLowerCase().includes(searchTerm)
+            stadium => (stadium.location && stadium.location.toLowerCase().includes(searchTerm)) || 
+                       (stadium.name && stadium.name.toLowerCase().includes(searchTerm))
         );
     }
     
@@ -249,18 +678,15 @@ function applySearchFilters(stadiums) {
         
         if (min && max) {
             filteredStadiums = filteredStadiums.filter(
-                stadium => stadium.price >= parseInt(min) && stadium.price <= parseInt(max)
+                stadium => parseFloat(stadium.price) >= parseInt(min) && parseFloat(stadium.price) <= parseInt(max)
             );
         } else if (min) {
             // Handle cases like "200+" where there's only a min value
             filteredStadiums = filteredStadiums.filter(
-                stadium => stadium.price >= parseInt(min)
+                stadium => parseFloat(stadium.price) >= parseInt(min)
             );
         }
     }
-    
-    // In a real app, would check availability based on date
-    // For demo purposes, we just keep all stadiums regardless of date
     
     return filteredStadiums;
 }
@@ -269,7 +695,9 @@ function applySearchFilters(stadiums) {
 function renderStadiums(stadiums) {
     if (!stadiumResults) return;
     
-    if (stadiums.length === 0) {
+    console.log('Rendering stadiums:', stadiums);
+    
+    if (!stadiums || stadiums.length === 0) {
         stadiumResults.innerHTML = `
             <div class="no-results">
                 <h3>No stadiums found</h3>
@@ -283,37 +711,59 @@ function renderStadiums(stadiums) {
             clearFiltersBtn.addEventListener('click', clearFilters);
         }
         
-        resultsCount.textContent = 'No stadiums found';
+        if (resultsCount) {
+            resultsCount.textContent = 'No stadiums found';
+        }
         return;
     }
     
     // Update results count
-    resultsCount.textContent = `Showing ${stadiums.length} stadium${stadiums.length === 1 ? '' : 's'}`;
+    if (resultsCount) {
+        resultsCount.textContent = `Showing ${stadiums.length} stadium${stadiums.length === 1 ? '' : 's'}`;
+    }
     
     // Generate HTML for stadium cards
     let html = '';
     
     stadiums.forEach(stadium => {
+        // Safely get properties with fallbacks
+        const id = stadium.id || 0;
+        const name = stadium.name || 'Unknown Stadium';
+        const location = stadium.location || 'Location not specified';
+        const price = stadium.price || '0';
+        const description = stadium.description || '';
+        const sportType = stadium.sport_type || '';
+        
+        // Set default image if none provided
+        const imageUrl = getSafeImageUrl(stadium.image);
+        
+        // Set default rating if none provided (the API doesn't seem to have ratings)
+        const rating = stadium.rating || 4.0;
+        const reviews = stadium.reviews || 0;
+        
         html += `
-            <div class="stadium-card" data-id="${stadium.id}" data-price="${stadium.price}" data-rating="${stadium.rating}" data-sport-type="${stadium.sportType}">
+            <div class="stadium-card" data-id="${id}" data-price="${price}" data-rating="${rating}" data-sport-type="${sportType}">
                 <div class="stadium-image">
-                    <img src="${stadium.images?.[0] || 'images/stadium-placeholder.jpg'}" alt="${stadium.name}">
+                    <img src="${imageUrl}" alt="${name}" onerror="if(this.src !== 'images/stadium-placeholder.jpg') this.src='images/stadium-placeholder.jpg';">
                 </div>
                 <div class="stadium-info">
-                    <h3 class="stadium-name">${stadium.name}</h3>
+                    <h3 class="stadium-name">${name}</h3>
                     <div class="stadium-meta">
-                        <span class="stadium-location">${stadium.location}</span>
-                        <span class="stadium-sport">${formatSportType(stadium.sportType)}</span>
+                        <span class="stadium-location">${location}</span>
+                        <span class="stadium-sport">${formatSportType(sportType)}</span>
+                    </div>
+                    <div class="stadium-description">
+                        ${description ? `<p>${truncateText(description, 100)}</p>` : ''}
                     </div>
                     <div class="stadium-footer">
-                        <div class="stadium-price">${formatCurrency(stadium.price)}/hour</div>
+                        <div class="stadium-price">${formatCurrency(price)}/hour</div>
                         <div class="stadium-rating">
-                            ${generateStarRating(stadium.rating)}
-                            <span>(${stadium.reviews || 0})</span>
+                            ${generateStarRating(rating)}
+                            <span>(${reviews})</span>
                         </div>
                     </div>
                 </div>
-                <a href="stadium-details.html?id=${stadium.id}" class="stadium-card-overlay"></a>
+                <a href="stadium-details.html?id=${id}" class="stadium-card-overlay"></a>
             </div>
         `;
     });
@@ -328,6 +778,12 @@ function renderStadiums(stadiums) {
             window.location.href = `stadium-details.html?id=${id}`;
         });
     });
+}
+
+// Helper function to truncate text
+function truncateText(text, maxLength) {
+    if (!text) return '';
+    return text.length > maxLength ? text.substr(0, maxLength) + '...' : text;
 }
 
 // Format sport type for display
@@ -359,3 +815,4 @@ function clearFilters() {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', initStadiumSearch);
+
