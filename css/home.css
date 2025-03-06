@@ -1,201 +1,530 @@
+/* Enhanced Home page styles */
+
+/* Hero Section */
 .hero {
-    background: linear-gradient(rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.7)), url('../images/hero-bg.jpg');
+    background: linear-gradient(rgba(44, 62, 80, 0.6), rgba(44, 62, 80, 0.8)), url('../images/hero-bg.jpg');
     background-size: cover;
     background-position: center;
-    height: 500px;
+    height: 600px;
     color: white;
     display: flex;
     align-items: center;
+    position: relative;
     text-align: center;
 }
 
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%);
+    z-index: 1;
+}
+
 .hero-content {
-    max-width: 700px;
+    max-width: 800px;
     margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
 }
 
 .hero h1 {
-    font-size: 3rem;
+    font-size: 3.5rem;
     margin-bottom: 20px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    animation: fadeInUp 0.8s ease-out;
 }
 
-.hero p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
+.hero-subtitle {
+    font-size: 1.4rem;
+    margin-bottom: 40px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    animation: fadeInUp 1s ease-out;
 }
 
 .search-box {
     display: flex;
-    max-width: 500px;
-    margin: 0 auto;
+    max-width: 600px;
+    margin: 0 auto 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    border-radius: 4px;
+    animation: fadeInUp 1.2s ease-out;
+    height: 60px; /* Add fixed height */
 }
 
 .search-box input {
     flex: 1;
-    padding: 12px 15px;
+    padding: 16px 20px;
     border: none;
     border-radius: 4px 0 0 4px;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    height: 100%; /* Make input full height */
 }
 
-.search-box button {
-    padding: 12px 25px;
+.search-btn {
+    padding: 0 25px;
     border-radius: 0 4px 4px 0;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Add this to center horizontally */
+    height: 100%; /* Ensure full height */
+    min-width: 160px; /* Add minimum width */
+    border: none; /* Remove any default border */
+}
+
+.search-btn i {
+    margin-right: 8px;
+}
+
+.popular-searches {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    animation: fadeInUp 1.4s ease-out;
+}
+
+.popular-searches span {
+    margin-right: 10px;
+    opacity: 0.8;
+}
+
+.popular-searches a {
+    color: white;
+    margin: 0 10px;
+    text-decoration: underline;
+    transition: var(--transition);
+}
+
+.popular-searches a:hover {
+    color: var(--primary-color);
+}
+
+/* Intro Banner */
+.intro-banner {
+    background-color: var(--primary-color);
+    padding: 30px 0;
+    color: white;
+    margin-bottom: 60px;
+}
+
+.banner-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.banner-text {
+    flex: 3;
+}
+
+.banner-text h2 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.banner-cta {
+    flex: 1;
+    text-align: right;
+}
+
+.banner-cta .btn {
+    background-color: white;
+    color: var(--primary-color) !important;
+    font-weight: bold;
+    padding: 12px 25px;
+}
+
+.banner-cta .btn:hover {
+    background-color: #f5f5f5;
+}
+
+/* Section Header */
+.section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-header h2 {
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    position: relative;
+    display: inline-block;
+}
+
+.section-header h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: var(--primary-color);
+}
+
+.section-header p {
+    color: #777;
+    font-size: 1.1rem;
 }
 
 /* Features Section */
 .features {
-    padding: 60px 0;
+    padding: 80px 0;
     text-align: center;
-}
-
-.features h2 {
-    font-size: 2rem;
-    margin-bottom: 40px;
+    background-color: #fff;
 }
 
 .features-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
+    gap: 40px;
 }
 
 .feature {
-    padding: 30px;
+    padding: 40px 30px;
     background: white;
     border-radius: 8px;
-    box-shadow: var(--box-shadow);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     transition: var(--transition);
+    border: 1px solid #f0f0f0;
 }
 
 .feature:hover {
-    transform: translateY(-5px);
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    border-color: var(--primary-color);
 }
 
 .feature-icon {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     background: rgba(52, 152, 219, 0.1);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 20px;
+    margin: 0 auto 25px;
+    transition: var(--transition);
 }
 
-.feature-icon i {
-    font-size: 2rem;
-    color: var(--primary-color);
+.feature:hover .feature-icon {
+    background: rgba(52, 152, 219, 0.2);
 }
 
-/* Added style for the image in feature icon */
-.feature-icon .feature-img {
-    width: 40px;
-    height: 40px;
+.feature-img {
+    width: 45px;
+    height: 45px;
     object-fit: contain;
 }
 
 .feature h3 {
     margin-bottom: 15px;
+    font-size: 1.4rem;
+    color: var(--secondary-color);
 }
 
-/* Featured Stadiums */
-.featured-stadiums {
-    padding: 60px 0;
-    background-color: #f5f7fa;
+.feature p {
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
 }
 
-.featured-stadiums h2 {
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 40px;
+.feature-link {
+    display: inline-block;
+    color: var(--primary-color);
+    font-weight: 500;
+    transition: var(--transition);
 }
 
-.stadiums-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
+.feature-link:hover {
+    color: var(--secondary-color);
 }
 
-.stadium-card {
+.feature-link i {
+    margin-left: 5px;
+    font-size: 0.85em;
+    transition: transform 0.3s;
+}
+
+.feature-link:hover i {
+    transform: translateX(5px);
+}
+
+/* Testimonials */
+.testimonials {
+    padding: 80px 0;
+    background-color: #f9f9f9;
+}
+
+.testimonials-slider {
+    display: flex;
+    gap: 25px;
+    overflow-x: hidden;
+    margin-bottom: 20px;
+}
+
+.testimonial {
+    min-width: 48%;
+    padding: 5px;
+}
+
+.testimonial-content {
     background: white;
     border-radius: 8px;
-    overflow: hidden;
-    box-shadow: var(--box-shadow);
-    transition: var(--transition);
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    position: relative;
 }
 
-.stadium-card:hover {
-    transform: translateY(-5px);
+.testimonial-content:before {
+    content: "\201C";
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 4rem;
+    color: rgba(52, 152, 219, 0.1);
+    font-family: Georgia, serif;
 }
 
-.stadium-image {
-    height: 200px;
-    overflow: hidden;
-}
-
-.stadium-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: var(--transition);
-}
-
-.stadium-card:hover .stadium-image img {
-    transform: scale(1.05);
-}
-
-.stadium-info {
-    padding: 20px;
-}
-
-.stadium-name {
-    font-size: 1.3rem;
-    margin-bottom: 10px;
-    font-weight: 600;
-}
-
-.stadium-meta {
-    display: flex;
-    justify-content: space-between;
+.testimonial-rating {
+    color: #f39c12;
     margin-bottom: 15px;
+}
+
+.testimonial-text {
+    font-style: italic;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+}
+
+.testimonial-author img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
+}
+
+.testimonial-author h4 {
+    margin: 0 0 3px;
+    font-size: 1.1rem;
+}
+
+.testimonial-author p {
+    margin: 0;
     color: #777;
     font-size: 0.9rem;
 }
 
-.stadium-price {
-    font-weight: 700;
-    color: var(--primary-color);
-    font-size: 1.1rem;
-}
-
-.stadium-footer {
+.testimonial-navigation {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 15px;
+}
+
+.nav-prev, .nav-next {
+    background: var(--primary-color);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
     align-items: center;
-    margin-top: 15px;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
 }
 
-.stadium-rating {
-    color: #f39c12;
+.nav-prev:hover, .nav-next:hover {
+    background: var(--secondary-color);
 }
 
-/* Responsive */
+/* App Banner */
+.app-banner {
+    padding: 80px 0;
+    background-color: white;
+}
+
+.app-banner-content {
+    display: flex;
+    align-items: center;
+}
+
+.app-banner-text {
+    flex: 1;
+    padding-right: 40px;
+}
+
+.app-banner-text h2 {
+    font-size: 2.2rem;
+    margin-bottom: 15px;
+    color: var(--secondary-color);
+}
+
+.app-banner-text p {
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #555;
+}
+
+.app-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.app-button {
+    display: flex;
+    align-items: center;
+    background: var(--secondary-color);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.app-button:hover {
+    background: var(--primary-color);
+}
+
+.app-button i {
+    font-size: 2rem;
+    margin-right: 10px;
+}
+
+.app-button span {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.2;
+}
+
+.app-button small {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.app-banner-image {
+    flex: 1;
+    text-align: center;
+}
+
+.app-banner-image img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Newsletter Section */
+.newsletter {
+    padding: 60px 0;
+    background-color: #f9f9f9;
+}
+
+.newsletter-content {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.newsletter-text h2 {
+    margin-bottom: 10px;
+    color: var(--secondary-color);
+}
+
+.newsletter-text p {
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.newsletter-form {
+    display: flex;
+    gap: 10px;
+}
+
+.newsletter-form input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.newsletter-form button {
+    padding: 12px 30px;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .hero h1 {
+        font-size: 2.8rem;
+    }
+
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .app-banner-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .app-banner-text {
+        padding-right: 0;
+        margin-bottom: 30px;
+    }
+
+    .app-buttons {
+        justify-content: center;
+    }
+}
+
 @media (max-width: 768px) {
     .hero h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
     }
-    
-    .features-grid, 
-    .stadiums-grid {
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .search-box {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .search-box input {
+        border-radius: 4px 4px 0 0;
+    }
+
+    .search-btn {
+        border-radius: 0 0 4px 4px;
+        height: 50px;
+    }
+
+    .features-grid {
         grid-template-columns: 1fr;
     }
-}
 
-@media (min-width: 769px) and (max-width: 992px) {
-    .features-grid, 
-    .stadiums-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .testimonial {
+        min-width: 100%;
+    }
+
+    .newsletter-form {
+        flex-direction: column;
+    }
+
+    .newsletter-form button {
+        width: 100%;
     }
 }

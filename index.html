@@ -3,10 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StadiumFinder - Book Sports Venues</title>
+    <meta name="description" content="StadiumFinder - Find and book sports venues easily. Discover the perfect stadium for your game.">
+    <title>StadiumFinder - Find and Book Sports Venues</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/home.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <!-- Add Font Awesome directly from CDN for better loading -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Add preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 </head>
 <body>
     <header id="main-header">
@@ -35,11 +40,34 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1>Find and Book the Perfect Stadium</h1>
-                <p>Discover sports venues near you and book your next game instantly</p>
+                <h1>Find Your Perfect Stadium</h1>
+                <p class="hero-subtitle">Discover and book sports venues within minutes. No hassle, just play!</p>
                 <div class="search-box">
-                    <input type="text" placeholder="Enter your location...">
-                    <button class="btn btn-primary">Search</button>
+                    <input type="text" placeholder="Enter location or stadium name...">
+                    <button class="btn btn-primary search-btn">
+                        <i class="fas fa-search"></i> Find Stadiums
+                    </button>
+                </div>
+                <div class="popular-searches">
+                    <span>Popular:</span>
+                    <a href="stadiums.html?sport=football">Football</a>
+                    <a href="stadiums.html?sport=basketball">Basketball</a>
+                    <a href="stadiums.html?sport=tennis">Tennis</a>
+                </div>
+            </div>
+        </div>
+        <div class="hero-overlay"></div>
+    </section>
+
+    <section class="intro-banner">
+        <div class="container">
+            <div class="banner-content">
+                <div class="banner-text">
+                    <h2>Vietnam's #1 Stadium Booking Platform</h2>
+                    <p>Join thousands of sports enthusiasts who find and book venues through our platform every day.</p>
+                </div>
+                <div class="banner-cta">
+                    <a href="stadiums.html" class="btn btn-primary">Explore Stadiums</a>
                 </div>
             </div>
         </div>
@@ -47,40 +75,133 @@
 
     <section class="features">
         <div class="container">
-            <h2>How It Works</h2>
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Three simple steps to get you playing your favorite sport</p>
+            </div>
             <div class="features-grid">
                 <div class="feature">
                     <div class="feature-icon">
-                        <!-- Replaced icon with image -->
-                        <img src="assets/loupe.png" alt="Search" class="feature-img">
+                        <img src="assets/search-icon.png" alt="Search" class="feature-img">
                     </div>
                     <h3>Find</h3>
-                    <p>Search stadiums by location and filter by facilities</p>
+                    <p>Search stadiums by location, sport type, and filter by your preferences</p>
+                    <a href="stadiums.html" class="feature-link">Search Now <i class="fas fa-arrow-right"></i></a>
                 </div>
                 <div class="feature">
                     <div class="feature-icon">
-                        <!-- Replaced icon with image -->
-                        <img src="assets/loupe.png" alt="Calendar" class="feature-img">
+                        <img src="assets/calendar-icon.png" alt="Calendar" class="feature-img">
                     </div>
                     <h3>Book</h3>           
-                    <p>Select your preferred time slot and book instantly</p>
+                    <p>Select your preferred time slot and book instantly with secure payment</p>
+                    <a href="#" class="feature-link">How Booking Works <i class="fas fa-arrow-right"></i></a>
                 </div>
                 <div class="feature">
                     <div class="feature-icon">
-                        <img src="assets/loupe.png" alt="Football" class="feature-img">
+                        <img src="assets/sports-icon.png" alt="Sports" class="feature-img">
                     </div>
                     <h3>Play</h3>
-                    <p>Enjoy your game at your chosen stadium</p>
+                    <p>Enjoy your game at your chosen stadium with friends or teammates</p>
+                    <a href="#" class="feature-link">Learn More <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="featured-stadiums">
+    <section class="testimonials">
         <div class="container">
-            <h2>Featured Stadiums</h2>
-            <div class="stadiums-grid" id="featured-stadiums">
-                <!-- Stadiums will be loaded dynamically via JavaScript -->
+            <div class="section-header">
+                <h2>What Our Users Say</h2>
+                <p>Trusted by thousands of sports enthusiasts</p>
+            </div>
+            <div class="testimonials-slider" id="testimonials-slider">
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"StadiumFinder made booking a football pitch so easy. No more calling around different venues!"</p>
+                        <div class="testimonial-author">
+                            <img src="assets/testimonials/user1.jpg" alt="User" onerror="this.src='assets/loupe.png'">
+                            <div>
+                                <h4>Minh Nguyen</h4>
+                                <p>Football Player</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p class="testimonial-text">"As a basketball coach, I need reliable venues for practice. This platform has been a game-changer."</p>
+                        <div class="testimonial-author">
+                            <img src="assets/testimonials/user2.jpg" alt="User" onerror="this.src='assets/loupe.png'">
+                            <div>
+                                <h4>Thanh Tran</h4>
+                                <p>Basketball Coach</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-navigation">
+                <button class="nav-prev" id="testimonial-prev"><i class="fas fa-chevron-left"></i></button>
+                <button class="nav-next" id="testimonial-next"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <section class="app-banner">
+        <div class="container">
+            <div class="app-banner-content">
+                <div class="app-banner-text">
+                    <h2>Get Our Mobile App</h2>
+                    <p>Book stadiums on the go! Download our app for an even better experience.</p>
+                    <div class="app-buttons">
+                        <a href="#" class="app-button">
+                            <i class="fab fa-apple"></i>
+                            <span>
+                                <small>Download on the</small>
+                                App Store
+                            </span>
+                        </a>
+                        <a href="#" class="app-button">
+                            <i class="fab fa-google-play"></i>
+                            <span>
+                                <small>GET IT ON</small>
+                                Google Play
+                            </span>
+                        </a>
+                    </div>
+                </div>
+                <div class="app-banner-image">
+                    <img src="assets/mobile-app.png" alt="StadiumFinder Mobile App" onerror="this.src='assets/loupe.png'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <div class="newsletter-text">
+                    <h2>Stay Updated</h2>
+                    <p>Subscribe to our newsletter for exclusive deals and new stadium listings</p>
+                </div>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Your email address" required>
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
             </div>
         </div>
     </section>
@@ -91,28 +212,8 @@
                 <div class="footer-section">
                     <h3>StadiumFinder</h3>
                     <p>Find and book sports venues easily</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="stadiums.html">Find Stadium</a></li>
-                        <li><a href="partner.html">Partner With Us</a></li>
-                        <li><a href="about.html">About</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Contact</h3>
-                    <p>Email: info@stadiumfinder.com</p>
-                    <p>Phone: +1 234 567 890</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 StadiumFinder. All Rights Reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="./js/main.js" type="module"></script>
-    <script src="./js/home.js" type="module"></script>
-</body>
-</html>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>

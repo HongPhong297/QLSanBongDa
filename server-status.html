@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Status Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f7f9fc;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h1 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+        }
+        .status-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f5f7fa;
+            border-left: 5px solid #ddd;
+        }
+        .status-indicator {
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin-right: 15px;
+        }
+        .online {
+            background: #d4edda;
+            color: #155724;
+        }
+        .offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .toggle-container {
+            display: flex;
+            align-items: center;
+        }
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+            margin-right: 10px;
+        }
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        .diagnostic {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 5px solid #6c757d;
+        }
+        .diagnostic h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        .diagnostic ul, .diagnostic ol {
+            padding-left: 20px;
+        }
+        .diagnostic li {
+            margin-bottom: 8px;
+        }
+        pre {
+            background: #eaeaea;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+        }
+        code {
+            background: #eaeaea;
+            padding: 3px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .server-result {
+            margin-top: 20px;
+        }
+        .help-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Server Status Checker</h1>
+        
+        <div class="status-section">
+            <div id="server-status" class="status-indicator offline">Checking...</div>
+            <div>API Server Status</div>
+        </div>
+        
+        <div class="controls">
+            <button id="check-server">Check Now</button>
+            <div class="toggle-container">
+                <label class="toggle">
+                    <input type="checkbox" id="auto-refresh">
+                    <span class="slider"></span>
+                </label>
+                <span>Auto-refresh every 5s</span>
+            </div>
+        </div>
+        
+        <div id="server-result" class="server-result">
+            Checking server status...
+        </div>
+        
+        <div class="help-section">
+            <h2>Common Issues & Solutions</h2>
+            
+            <h3>1. Server Not Running</h3>
+            <p>Make sure your API server is running with the command:</p>
+            <pre>npm start</pre>
+            <p>or whatever command you use to start your server</p>
+            
+            <h3>2. CORS Issues</h3>
+            <p>If the server is running but you're getting CORS errors, add these headers to your server:</p>
+            <pre>
+// Example for Express.js
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  next();
+});</pre>
+            
+            <h3>3. Wrong API Endpoint</h3>
+            <p>Verify your API endpoint is correct. Currently checking:</p>
+            <pre>http://localhost:3000/api/stadiums</pre>
+            
+            <h3>4. Network Issues</h3>
+            <p>Make sure your network is functioning properly and that localhost is accessible.</p>
+        </div>
+    </div>
+    
+    <script src="js/server-check.js"></script>
+</body>
+</html>

@@ -12,7 +12,9 @@
     <header id="main-header">
         <div class="container">
             <div class="logo">
-                <h1>StadiumFinder</h1>
+                <a href="index.html" class="logo-link">
+                    <h1>StadiumFinder</h1>
+                </a>
             </div>
             <nav id="main-nav">
                 <ul>
@@ -30,41 +32,39 @@
         </div>
     </header>
 
-    <section class="auth-container">
-        <div class="auth-form">
-            <h2>Login to Your Account</h2>
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="customer">Customer</button>
-                <button class="auth-tab" data-tab="owner">Stadium Owner</button>
-            </div>
-            <div id="error-message" class="error-message"></div>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-               
-                    <div class="remember-forgot">
-                       <div class="remember-me">
-                        <input type="checkbox" />
-                        <span>Remember me</span>
-                       </div>
-
-                     <p><a href="forgot-password.html">Forgot Password?</a></p> 
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth-container">
+                <h2>Login to Your Account</h2>
+                
+                <div id="login-error" class="error-message"></div>
+                
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
                     </div>
-               
-                <div class="form-group">
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <div class="form-options">
+                        <div class="remember-me">
+                            <input type="checkbox" id="remember" name="remember">
+                            <label for="remember">Remember me</label>
+                        </div>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
+                    </div>
+                    
                     <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </form>
+                
+                <div class="auth-footer">
+                    Don't have an account? <a href="register.html">Register here</a>
                 </div>
-            
-            <div class="auth-footer">
-                <p>Don't have an account? <a href="register.html">Register</a></p>
             </div>
-        </form>
         </div>
     </section>
 
@@ -96,6 +96,6 @@
     </footer>
 
     <script src="./js/main.js" type="module"></script>
-    <script src="./js/auth.js" type="module"></script>
+    <script src="./js/login.js" type="module"></script>
 </body>
 </html>

@@ -97,77 +97,24 @@ function initDarkMode() {
 
 // Display notification to user
 export function showNotification(message, type = 'info') {
-    // Check if notification container exists, if not, create it
-    let notificationContainer = document.getElementById('notification-container');
-    if (!notificationContainer) {
-        notificationContainer = document.createElement('div');
-        notificationContainer.id = 'notification-container';
-        notificationContainer.style.position = 'fixed';
-        notificationContainer.style.top = '20px';
-        notificationContainer.style.right = '20px';
-        notificationContainer.style.zIndex = '1000';
-        document.body.appendChild(notificationContainer);
-    }
-
-    // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
-    notification.style.padding = '15px 20px';
-    notification.style.marginBottom = '10px';
-    notification.style.borderRadius = '4px';
-    notification.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-    notification.style.opacity = '0';
-    notification.style.transition = 'opacity 0.3s ease';
-    notification.style.cursor = 'pointer';
-    
-    // Set color based on type
-    switch(type) {
-        case 'success':
-            notification.style.backgroundColor = '#2ecc71';
-            notification.style.color = 'white';
-            break;
-        case 'error':
-            notification.style.backgroundColor = '#e74c3c';
-            notification.style.color = 'white';
-            break;
-        case 'warning':
-            notification.style.backgroundColor = '#f39c12';
-            notification.style.color = 'white';
-            break;
-        default:
-            notification.style.backgroundColor = '#3498db';
-            notification.style.color = 'white';
-    }
-    
     notification.textContent = message;
     
-    // Add to container
-    notificationContainer.appendChild(notification);
+    document.body.appendChild(notification);
     
-    // Fade in
+    // Show notification
     setTimeout(() => {
-        notification.style.opacity = '1';
+        notification.classList.add('show');
     }, 10);
     
-    // Remove after delay
+    // Hide and remove after 3 seconds
     setTimeout(() => {
-        notification.style.opacity = '0';
+        notification.classList.remove('show');
         setTimeout(() => {
-            if (notification.parentNode === notificationContainer) {
-                notificationContainer.removeChild(notification);
-            }
+            document.body.removeChild(notification);
         }, 300);
-    }, 5000);
-    
-    // Remove on click
-    notification.addEventListener('click', () => {
-        notification.style.opacity = '0';
-        setTimeout(() => {
-            if(notification.parentNode === notificationContainer) {
-                notificationContainer.removeChild(notification);
-            }
-        }, 300);
-    });
+    }, 3000);
 }
 
 // Authentication related functions
@@ -279,56 +226,125 @@ export function updateNavigation() {
     }
 }
 
-// API service functions
+// API service functions - Updated to use real API
 export async function fetchAPI(endpoint, options = {}) {
-    // For now, simulate API calls with localStorage
-    // In a real app, this would make actual API requests
+    const API_BASE_URL = 'http://localhost:3000/api';
     
     try {
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
         const defaultOptions = {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            mode: 'cors' // Explicitly set CORS mode
         };
         
         const mergedOptions = { ...defaultOptions, ...options };
         
-        // Get data from localStorage based on endpoint
-        if (endpoint === '/stadiums' && mergedOptions.method === 'GET') {
+        // If there's a body, stringify it
+        if (mergedOptions.body && typeof mergedOptions.body === 'object') {
+            mergedOptions.body = JSON.stringify(mergedOptions.body);
+        }
+        
+        // Log the request for debugging
+        console.log(`Fetching ${API_BASE_URL}${endpoint}`, mergedOptions);
+        
+        // Add a timeout to prevent hanging requests
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        mergedOptions.signal = controller.signal;
+        
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, mergedOptions);
+        clearTimeout(timeoutId);
+        
+        // Log response status for debugging
+        console.log(`Response status:`, response.status, response.statusText);
+        
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status} ${response.statusText}`);
+        }
+        
+        // For debugging, get the response text first and log it
+        const responseText = await response.text();
+        console.log('Raw response:', responseText);
+        
+        // Try to parse the JSON response
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('JSON parse error:', parseError);
+            throw new Error('Invalid JSON response from server');
+        }
+        
+        return { success: true, data };
+    } catch (error) {
+        console.error('API fetch error:', error);
+        
+        // Check if it's a network error - likely CORS or server down
+        if (error.message === 'Failed to fetch' || error.name === 'AbortError') {
+            showNotification('Network error. Check if the API server is running and CORS is configured.', 'error');
+        } else {
+            showNotification(`API error: ${error.message}`, 'error');
+        }
+        
+        // Fallback to localStorage for demo purposes
+        console.log('Falling back to localStorage data');
+        
+        if (endpoint === '/stadiums' && options.method === 'GET') {
             const stadiums = JSON.parse(localStorage.getItem('stadiums') || '[]');
             return { success: true, data: stadiums };
         }
         
-        if (endpoint.startsWith('/stadiums/') && mergedOptions.method === 'GET') {
+        if (endpoint.startsWith('/stadiums/') && options.method === 'GET') {
             const stadiumId = endpoint.split('/')[2];
             const stadiums = JSON.parse(localStorage.getItem('stadiums') || '[]');
             const stadium = stadiums.find(s => s.id === stadiumId);
             
             if (stadium) {
                 return { success: true, data: stadium };
-            } else {
-                return { success: false, error: 'Stadium not found' };
             }
         }
         
-        if (endpoint === '/bookings' && mergedOptions.method === 'POST') {
-            const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            const newBooking = { id: generateId(), ...JSON.parse(mergedOptions.body) };
-            bookings.push(newBooking);
-            localStorage.setItem('bookings', JSON.stringify(bookings));
-            return { success: true, data: newBooking };
-        }
-        
-        return { success: false, error: 'Endpoint not implemented' };
-    } catch (error) {
-        console.error('API Error:', error);
-        return { success: false, error: 'An unexpected error occurred' };
+        return { 
+            success: false, 
+            error: error.message,
+            data: null 
+        };
     }
 }
+
+// Helper function to test API connection
+export async function testAPIConnection() {
+    try {
+        showNotification('Testing API connection...', 'info');
+        const result = await fetchAPI('/stadiums');
+        
+        if (result.success && result.data) {
+            showNotification('API connection successful!', 'success');
+            console.log('Stadiums data:', result.data);
+            return true;
+        } else {
+            showNotification('API connection failed.', 'error');
+            return false;
+        }
+    } catch (error) {
+        showNotification(`API test failed: ${error.message}`, 'error');
+        return false;
+    }
+}
+
+// Add a test connection button if we're on the debug page
+document.addEventListener('DOMContentLoaded', () => {
+    const debugButton = document.getElementById('test-api-connection');
+    if (debugButton) {
+        debugButton.addEventListener('click', testAPIConnection);
+    }
+    
+    // Rest of the initialization code...
+    initUI();
+});
 
 // Helper function to generate unique IDs
 export function generateId() {
@@ -342,14 +358,17 @@ export function validateEmail(email) {
 }
 
 export function validatePassword(password) {
-    // At least 8 characters, 1 uppercase, 1 lowercase, 1 number
-    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-    return re.test(String(password));
+    // At least 8 characters with at least one letter and one number
+    if (password.length < 8) return false;
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    return hasLetter && hasNumber;
 }
 
 export function validatePhone(phone) {
-    const re = /^\+?[0-9]{10,15}$/;
-    return re.test(String(phone).replace(/\s+/g, ''));
+    // Basic validation - allow digits, spaces, and common phone symbols
+    const re = /^[\d\s\+\-\(\)]{8,20}$/;
+    return re.test(String(phone));
 }
 
 // Format date and time for display
@@ -363,27 +382,64 @@ export function formatTime(timeString) {
 }
 
 export function formatCurrency(amount) {
-    return '$' + parseFloat(amount).toFixed(2);
+    // Handle strings or numbers
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount)) return '$0.00';
+    
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2
+    }).format(numAmount);
 }
 
 // Generate star rating HTML
 export function generateStarRating(rating) {
-    let stars = '';
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
     
-    for (let i = 1; i <= 5; i++) {
-        if (i <= fullStars) {
-            stars += '<i class="fas fa-star"></i>';
-        } else if (i === fullStars + 1 && halfStar) {
-            stars += '<i class="fas fa-star-half-alt"></i>';
-        } else {
-            stars += '<i class="far fa-star"></i>';
-        }
+    let stars = '';
+    
+    // Full stars
+    for (let i = 0; i < fullStars; i++) {
+        stars += '<i class="fas fa-star"></i>';
+    }
+    
+    // Half star
+    if (halfStar) {
+        stars += '<i class="fas fa-star-half-alt"></i>';
+    }
+    
+    // Empty stars
+    for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star"></i>';
     }
     
     return stars;
 }
+
+// Add placeholder image for images that fail to load
+document.addEventListener('DOMContentLoaded', function() {
+    const imgs = document.querySelectorAll('img');
+    imgs.forEach(img => {
+        img.onerror = function() {
+            this.src = 'images/stadium-placeholder.jpg';
+        };
+    });
+});
+
+// Mobile menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mainNav = document.getElementById('main-nav');
+    
+    if (menuToggle && mainNav) {
+        menuToggle.addEventListener('click', function() {
+            mainNav.classList.toggle('active');
+        });
+    }
+});
 
 // Initialize everything when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', initUI);

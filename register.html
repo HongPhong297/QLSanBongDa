@@ -12,7 +12,9 @@
     <header id="main-header">
         <div class="container">
             <div class="logo">
-                <h1>StadiumFinder</h1>
+                <a href="index.html" class="logo-link">
+                    <h1>StadiumFinder</h1>
+                </a>
             </div>
             <nav id="main-nav">
                 <ul>
@@ -30,64 +32,80 @@
         </div>
     </header>
 
-    <section class="auth-container">
-        <div class="auth-form">
-            <h2>Create an Account</h2>
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="customer">Customer</button>
-                <button class="auth-tab" data-tab="owner">Stadium Owner</button>
-            </div>
-            <div id="error-message" class="error-message"></div>
-            <form id="register-form">
-                <div class="form-group">
-                    <label for="fullname">Full Name</label>
-                    <input type="text" id="fullname" name="fullname" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone</label>
-                    <input type="tel" id="phone" name="phone" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <div class="form-group">
-                    <label for="confirm-password">Confirm Password</label>
-                    <input type="password" id="confirm-password" name="confirm-password" required>
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth-container">
+                <h2>Create an Account</h2>
+                
+                <div class="auth-tabs">
+                    <!-- <button class="auth-tab active" data-tab="user">Regular User</button>
+                    <button class="auth-tab" data-tab="owner">Stadium Owner</button> -->
+                    <button class="auth-tab active" data-tab="user">Customer</button>
+                    <button class="auth-tab" data-tab="owner">Stadium Owner</button>
                 </div>
                 
-                <!-- Stadium owner specific fields (initially hidden) -->
-                <div id="owner-fields" style="display: none;">
-                    <div class="form-group">
-                        <label for="company-name">Company Name</label>
-                        <input type="text" id="company-name" name="company-name">
-                    </div>
-                    <div class="form-group">
-                        <label for="business-address">Business Address</label>
-                        <textarea id="business-address" name="business-address"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="business-license">Business License Number</label>
-                        <input type="text" id="business-license" name="business-license">
-                    </div>
-                </div>
+                <div id="registration-error" class="error-message"></div>
+                <div id="registration-success" class="success-message"></div>
                 
-                <div>
+                <form id="register-form" class="auth-form">
+                    <!-- General fields for all users -->
+                    <div class="form-group">
+                        <label for="fullname">Full Name</label>
+                        <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Create a password" required>
+                        <small class="form-hint">Password must be at least 8 characters with numbers and letters.</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password-confirm">Confirm Password</label>
+                        <input type="password" id="password-confirm" name="password-confirm" placeholder="Confirm your password" required>
+                    </div>
+                    
+                    <!-- Owner-specific fields (initially hidden) -->
+                    <div id="owner-fields" style="display: none;">
+                        <h3 class="section-title">Business Information</h3>
+                        
+                        <div class="form-group">
+                            <label for="company-name">Company Name</label>
+                            <input type="text" id="company-name" name="company_name" placeholder="Enter your company name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="business-address">Business Address</label>
+                            <input type="text" id="business-address" name="business_address" placeholder="Enter your business address">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="business-license">Business License Number</label>
+                            <input type="text" id="business-license" name="business_license" placeholder="Enter your business license number">
+                        </div>
+                    </div>
+                    
                     <div class="terms">
-                            <input type="checkbox" name="terms" required />  
-                            <p>I agree to the <a href="#">Terms and Conditions</a></p>
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
                     </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block" id="register-btn">Register</button>
+                </form>
+                
+                <div class="auth-footer">
+                    Already have an account? <a href="login.html">Login here</a>
                 </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-block">Register</button>
-                </div>
-            </form>
-            <div class="auth-footer">
-                <p>Already have an account? <a href="login.html">Login</a></p>
             </div>
         </div>
     </section>
@@ -120,6 +138,6 @@
     </footer>
 
     <script src="./js/main.js" type="module"></script>
-    <script src="./js/auth.js" type="module"></script>
+    <script src="./js/register.js" type="module"></script>
 </body>
 </html>

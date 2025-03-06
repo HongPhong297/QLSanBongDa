@@ -1,67 +1,117 @@
-.auth-container {
+.auth-section {
+    padding: 60px 0;
+    min-height: 70vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 220px);
-    padding: 40px 0;
 }
 
-.auth-form {
+.auth-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 30px;
     background-color: white;
     border-radius: 8px;
     box-shadow: var(--box-shadow);
-    padding: 40px;
-    width: 100%;
-    max-width: 500px;
 }
 
-.auth-form h2 {
-    text-align: center;
+.auth-container h2 {
     margin-bottom: 30px;
+    text-align: center;
     color: var(--secondary-color);
 }
 
 .auth-tabs {
     display: flex;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #eee;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #eee;
 }
 
 .auth-tab {
-    padding: 10px 20px;
-    border: none;
+    flex: 1;
+    padding: 12px 15px;
     background: none;
-    cursor: pointer;
-    font-size: 1rem;
+    border: none;
+    border-bottom: 2px solid transparent;
     font-weight: 500;
     color: #777;
-    position: relative;
+    cursor: pointer;
     transition: var(--transition);
 }
 
 .auth-tab.active {
     color: var(--primary-color);
-}
-
-.auth-tab::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--primary-color);
-    transition: var(--transition);
-}
-
-.auth-tab.active::after {
-    width: 100%;
+    border-bottom-color: var(--primary-color);
 }
 
 .auth-footer {
+    margin-top: 25px;
     text-align: center;
-    margin-top: 30px;
     font-size: 0.9rem;
+}
+
+.section-title {
+    margin: 20px 0 15px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+}
+
+.form-hint {
+    display: block;
+    margin-top: 5px;
+    color: #777;
+    font-size: 0.85rem;
+}
+
+.error-message, .success-message {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    display: none;
+}
+
+.error-message {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    border-left: 3px solid #e74c3c;
+}
+
+.success-message {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+    border-left: 3px solid #2ecc71;
+}
+
+.error-message.show, .success-message.show {
+    display: block;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border-radius: 8px;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 .remember-forgot {
@@ -81,4 +131,41 @@
 
 .terms {
     font-size: 0.9rem;
+}
+
+.form-options {
+    display: flex;
+    flex-direction: column; /* Change to column */
+    gap: 10px; /* Add space between items */
+    margin-bottom: 20px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-start; /* Change this to align left */
+    margin-left: 0; /* Ensure no left margin */
+    padding-left: 0; /* Ensure no left padding */
+}
+
+.remember-me input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.remember-me label {
+    margin: 0;
+    font-weight: normal;
+}
+
+.forgot-password {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: var(--transition);
+    align-self: flex-start; /* Align to the left */
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
 }
