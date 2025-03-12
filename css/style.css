@@ -519,6 +519,59 @@ footer {
     }
 }
 
+/* Booking Success Dialog Styles */
+.booking-success-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.booking-success-content {
+    background-color: white;
+    padding: 40px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.success-icon i {
+    font-size: 4rem;
+    color: #2ecc71;
+    margin-bottom: 20px;
+}
+
+.booking-success-content h2 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
+}
+
+.booking-success-content p {
+    color: #666;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.booking-details {
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+    color: #888;
+}
+
+.close-dialog {
+    padding: 10px 30px;
+    font-size: 1rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .menu-toggle {

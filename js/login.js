@@ -62,9 +62,24 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show success message
             showNotification('Login successful! Redirecting...', 'success');
             
+            // Check if we have a redirect for booking
+            const bookingRedirect = localStorage.getItem('bookingRedirect');
+            let redirectUrl = 'index.html';
+            
+            // Get URL parameters to check if we have a redirect
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramRedirect = urlParams.get('redirect');
+            
+            if (bookingRedirect) {
+                redirectUrl = bookingRedirect;
+                localStorage.removeItem('bookingRedirect');
+            } else if (paramRedirect) {
+                redirectUrl = decodeURIComponent(paramRedirect);
+            }
+            
             // Redirect after a short delay
             setTimeout(() => {
-                window.location.href = 'index.html';
+                window.location.href = redirectUrl;
             }, 1000);
             
         } catch (error) {

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Stadium - StadiumFinder</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/booking.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <header id="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html" class="logo-link">
+                    <h1>StadiumFinder</h1>
+                </a>
+            </div>
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="stadiums.html">Find Stadium</a></li>
+                    <li><a href="partner.html">Partner With Us</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <section class="booking-hero">
+        <div class="container">
+            <h1>Book Your Stadium</h1>
+            <p>Complete your booking in just a few simple steps</p>
+        </div>
+    </section>
+
+    <section class="booking-section">
+        <div class="container">
+            <div class="booking-container">
+                <div class="booking-stadium-details">
+                    <div class="stadium-preview">
+                        <div class="stadium-image">
+                            <img src="" alt="Stadium" id="stadium-image">
+                        </div>
+                        <div class="stadium-info">
+                            <h2 id="stadium-name">Loading stadium...</h2>
+                            <div class="stadium-meta">
+                                <span class="stadium-location" id="stadium-location">
+                                    <i class="fas fa-map-marker-alt"></i> Loading...
+                                </span>
+                                <span class="stadium-sport" id="stadium-sport">
+                                    <i class="fas fa-futbol"></i> Loading...
+                                </span>
+                            </div>
+                            <div class="stadium-price" id="stadium-price">
+                                Loading price...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="booking-form-container">
+                    <h3>Select Date & Time</h3>
+                    <form id="booking-form">
+                        <div class="form-group">
+                            <label for="booking-date">Date</label>
+                            <input type="text" id="booking-date" name="booking-date" placeholder="Select a date" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="booking-time">Time</label>
+                            <div class="time-slots" id="time-slots">
+                                <!-- Time slots will be generated dynamically -->
+                                <div class="time-slot-loading">Loading available time slots...</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="duration">Duration</label>
+                            <select id="duration" name="duration" required>
+                                <option value="1">1 hour</option>
+                                <option value="2" selected>2 hours</option>
+                                <option value="3">3 hours</option>
+                                <option value="4">4 hours</option>
+                            </select>
+                        </div>
+                        
+                        <div class="booking-summary">
+                            <h3>Booking Summary</h3>
+                            <div class="summary-item">
+                                <span>Date:</span>
+                                <span id="summary-date">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Time:</span>
+                                <span id="summary-time">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Duration:</span>
+                                <span id="summary-duration">2 hours</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Hourly Rate:</span>
+                                <span id="summary-rate">-</span>
+                            </div>
+                            <div class="summary-item total">
+                                <span>Total:</span>
+                                <span id="summary-total">-</span>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block book-btn">
+                            <i class="fas fa-calendar-check"></i> Complete Booking
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>StadiumFinder</h3>
+                    <p>Find and book sports venues easily</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="stadiums.html">Find Stadium</a></li>
+                        <li><a href="partner.html">Partner With Us</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Email: info@stadiumfinder.com</p>
+                    <p>Phone: +1 234 567 890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 StadiumFinder. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Make sure flatpickr is loaded before our scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="./js/main.js" type="module"></script>
+    <script src="./js/imageLoader.js" type="module"></script>
+    <script src="./js/booking.js" type="module"></script>
+
+</body>
+</html>

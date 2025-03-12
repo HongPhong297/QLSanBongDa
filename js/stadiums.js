@@ -137,43 +137,6 @@ function initStadiumSearch() {
     }
 }
 
-// Fetch districts from API data
-// async function fetchDistrictsFromAPI() {
-//     if (!districtSelect) return;
-    
-//     try {
-//         const response = await fetch(API_URL);
-//         if (!response.ok) {
-//             throw new Error('Failed to fetch stadiums data');
-//         }
-//         const stadiums = await response.json();
-        
-//         // Extract unique districts
-//         const districts = [...new Set(stadiums.map(stadium => stadium.district).filter(Boolean))];
-        
-//         // Populate districts dropdown
-//         districtSelect.innerHTML = '<option value="">All Districts</option>';
-//         districts.forEach(district => {
-//             const option = document.createElement('option');
-//             option.value = district.toLowerCase();
-//             option.textContent = district;
-//             districtSelect.appendChild(option);
-//         });
-//     } catch (error) {
-//         console.error('Error fetching districts:', error);
-//         // Use fallback data
-//         const districts = [...new Set(fallbackStadiums.map(stadium => stadium.district).filter(Boolean))];
-        
-//         // Populate districts dropdown
-//         districtSelect.innerHTML = '<option value="">All Districts</option>';
-//         districts.forEach(district => {
-//             const option = document.createElement('option');
-//             option.value = district.toLowerCase();
-//             option.textContent = district;
-//             districtSelect.appendChild(option);
-//         });
-//     }
-// }
 // Fetch districts from API data with improved error handling
 async function fetchDistrictsFromAPI() {
     if (!districtSelect) return;
@@ -360,118 +323,6 @@ function fetchStadiumsFromDOM() {
     return stadiums;
 }
 
-// Fetch stadiums from API with better error handling
-// async function fetchStadiums() {
-//     try {
-//         // Show loading state first
-//         if (stadiumResults) {
-//             stadiumResults.innerHTML = '<div class="loading">Loading stadiums...</div>';
-//         }
-        
-//         console.log('Fetching stadiums from API:', API_URL);
-        
-//         let stadiums = [];
-        
-//         try {
-//             // Add longer timeout and better error handling
-//             const controller = new AbortController();
-//             const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-            
-//             const response = await fetch(API_URL, {
-//                 method: 'GET',
-//                 headers: {
-//                     'Accept': 'application/json',
-//                     'Content-Type': 'application/json'
-//                 },
-//                 signal: controller.signal
-//             });
-            
-//             clearTimeout(timeoutId);
-            
-//             console.log("Response status:", response.status, response.statusText);
-            
-//             if (!response.ok) {
-//                 throw new Error(`Failed to fetch stadiums: ${response.status} ${response.statusText}`);
-//             }
-            
-//             // Try to get the raw response text first for debugging
-//             try {
-//                 const responseText = await response.text();
-//                 console.log("Raw response:", responseText);
-                
-//                 // Now parse the JSON
-//                 if (responseText.trim()) {
-//                     stadiums = JSON.parse(responseText);
-//                     console.log('Received stadiums from API:', stadiums);
-                    
-//                     if (stadiums && stadiums.length > 0) {
-//                         // If we got to this point with actual data, it was successful
-//                         showNotification('Successfully loaded stadiums from API', 'success');
-//                     } else {
-//                         console.warn('API returned empty stadiums array');
-//                         showNotification('API returned no stadiums', 'warning');
-//                     }
-//                 } else {
-//                     console.warn('API returned empty response');
-//                     throw new Error('Empty response from API');
-//                 }
-//             } catch (parseError) {
-//                 console.error('Error parsing JSON:', parseError);
-//                 throw new Error('Invalid JSON response from API');
-//             }
-//         } catch (apiError) {
-//             console.warn('API fetch failed, using fallback data:', apiError);
-            
-//             // Show a detailed notification with error info and advice
-//             let errorMessage = 'Using demo data as API connection failed. ';
-            
-//             if (apiError.name === 'AbortError') {
-//                 errorMessage += 'The request timed out. Server may be slow or unreachable.';
-//             } else if (apiError.message.includes('Failed to fetch')) {
-//                 errorMessage += 'Server may not be running. Check server status and CORS settings.';
-//             } else {
-//                 errorMessage += apiError.message;
-//             }
-            
-//             showNotification(errorMessage, 'warning');
-            
-//             // Add a troubleshooting link
-//             const troubleshootLink = document.createElement('div');
-//             troubleshootLink.innerHTML = `
-//                 <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; text-align: center;">
-//                     <p>API connection issue detected</p>
-//                     <a href="server-status.html" class="btn btn-secondary" target="_blank">Troubleshoot Connection</a>
-//                 </div>
-//             `;
-            
-//             if (stadiumResults) {
-//                 stadiumResults.prepend(troubleshootLink);
-//             }
-            
-//             // Use fallback data
-//             stadiums = [...fallbackStadiums];
-//             console.log('Using fallback data:', stadiums);
-//         }
-        
-//         if (!Array.isArray(stadiums)) {
-//             console.error('API response is not an array:', stadiums);
-//             stadiums = [...fallbackStadiums];
-//         }
-        
-//         // Apply filters
-//         const filteredStadiums = applySearchFilters(stadiums);
-//         console.log('Filtered stadiums:', filteredStadiums);
-        
-//         // Render results
-//         renderStadiums(filteredStadiums);
-//     } catch (error) {
-//         console.error('Error fetching stadiums:', error);
-//         // Use fallback data in case of any error
-//         const filteredStadiums = applySearchFilters(fallbackStadiums);
-//         renderStadiums(filteredStadiums);
-//     }
-// }
-// Fetch stadiums from API with better error handling
 // Fetch stadiums from API with extensive debugging
 async function fetchStadiums() {
     try {
@@ -745,32 +596,58 @@ function renderStadiums(stadiums) {
             <div class="stadium-card" data-id="${id}" data-price="${price}" data-rating="${rating}" data-sport-type="${sportType}">
                 <div class="stadium-image">
                     <img src="${imageUrl}" alt="${name}" onerror="if(this.src !== 'images/stadium-placeholder.jpg') this.src='images/stadium-placeholder.jpg';">
+                    <div class="stadium-badge">${formatSportType(sportType)}</div>
                 </div>
                 <div class="stadium-info">
                     <h3 class="stadium-name">${name}</h3>
                     <div class="stadium-meta">
-                        <span class="stadium-location">${location}</span>
-                        <span class="stadium-sport">${formatSportType(sportType)}</span>
+                        <span class="stadium-location"><i class="fas fa-map-marker-alt"></i> ${location}</span>
                     </div>
                     <div class="stadium-description">
-                        ${description ? `<p>${truncateText(description, 100)}</p>` : ''}
+                        ${description ? `<p>${truncateText(description, 80)}</p>` : ''}
+                    </div>
+                    <div class="stadium-rating">
+                        ${generateStarRating(rating)}
+                        <span class="reviews-count">(${reviews})</span>
                     </div>
                     <div class="stadium-footer">
-                        <div class="stadium-price">${formatCurrency(price)}/hour</div>
-                        <div class="stadium-rating">
-                            ${generateStarRating(rating)}
-                            <span>(${reviews})</span>
+                        <div class="stadium-price">${formatCurrency(price)}<span>/hour</span></div>
+                        <div class="stadium-actions">
+                            <button class="btn btn-primary book-now-btn" data-id="${id}">
+                                <i class="fas fa-calendar-check"></i> Book Now
+                            </button>
+                            <button class="btn btn-secondary view-details-btn" data-id="${id}">
+                                <i class="fas fa-info-circle"></i> Details
+                            </button>
                         </div>
                     </div>
                 </div>
-                <a href="stadium-details.html?id=${id}" class="stadium-card-overlay"></a>
             </div>
         `;
     });
     
     stadiumResults.innerHTML = html;
     
-    // Add click event for stadium cards
+    // Add click events for buttons
+    document.querySelectorAll('.book-now-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const stadiumId = this.getAttribute('data-id');
+            handleBooking(stadiumId);
+        });
+    });
+    
+    document.querySelectorAll('.view-details-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const stadiumId = this.getAttribute('data-id');
+            window.location.href = `stadium-details.html?id=${stadiumId}`;
+        });
+    });
+    
+    // Still maintain the card click for details
     const stadiumCards = document.querySelectorAll('.stadium-card');
     stadiumCards.forEach(card => {
         card.addEventListener('click', function() {
@@ -778,6 +655,31 @@ function renderStadiums(stadiums) {
             window.location.href = `stadium-details.html?id=${id}`;
         });
     });
+}
+
+// Handle stadium booking
+function handleBooking(stadiumId) {
+    const isUserLoggedIn = isLoggedIn();
+    
+    if (!isUserLoggedIn) {
+        // Redirect to login with return URL
+        const returnUrl = `stadium-details.html?id=${stadiumId}&action=book`;
+        localStorage.setItem('bookingRedirect', returnUrl);
+        showNotification('Please log in to book a stadium', 'info');
+        
+        setTimeout(() => {
+            window.location.href = `login.html?redirect=${encodeURIComponent(returnUrl)}`;
+        }, 1000);
+        return;
+    }
+    
+    // If user is logged in, redirect to booking page
+    window.location.href = `booking.html?stadium=${stadiumId}`;
+}
+
+// Add isLoggedIn function if it doesn't exist already in this file
+function isLoggedIn() {
+    return localStorage.getItem('user') !== null;
 }
 
 // Helper function to truncate text

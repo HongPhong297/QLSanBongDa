@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - StadiumFinder</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/user-bookings.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header id="main-header">
+        <div class="container">
+            <div class="logo">
+                <a href="index.html" class="logo-link">
+                    <h1>StadiumFinder</h1>
+                </a>
+            </div>
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="stadiums.html">Find Stadium</a></li>
+                    <li><a href="partner.html">Partner With Us</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <section class="user-bookings-hero">
+        <div class="container">
+            <h1>My Bookings</h1>
+            <p>Manage all your stadium bookings in one place</p>
+        </div>
+    </section>
+
+    <section class="bookings-section">
+        <div class="container">
+            <div class="bookings-filters">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All Bookings</button>
+                    <button class="filter-tab" data-filter="upcoming">Upcoming</button>
+                    <button class="filter-tab" data-filter="past">Past</button>
+                    <button class="filter-tab" data-filter="cancelled">Cancelled</button>
+                </div>
+                <div class="search-sort">
+                    <div class="search-box">
+                        <input type="text" id="booking-search" placeholder="Search bookings...">
+                        <button id="search-btn"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div class="sort-select">
+                        <select id="booking-sort">
+                            <option value="date-desc">Latest First</option>
+                            <option value="date-asc">Oldest First</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="price-asc">Price: Low to High</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bookings-list-container">
+                <div id="bookings-loading">
+                    <i class="fas fa-spinner fa-spin"></i> Loading your bookings...
+                </div>
+                <div id="no-bookings" style="display: none;">
+                    <div class="no-bookings-message">
+                        <i class="fas fa-calendar-times"></i>
+                        <h3>No Bookings Found</h3>
+                        <p>You don't have any bookings yet. Start by finding a stadium to book!</p>
+                        <a href="stadiums.html" class="btn btn-primary">Find Stadiums</a>
+                    </div>
+                </div>
+                <div id="bookings-list">
+                    <!-- Bookings will be loaded here via JavaScript -->
+                </div>
+            </div>
+
+            <div class="pagination" id="bookings-pagination">
+                <!-- Pagination will be added via JavaScript if needed -->
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>StadiumFinder</h3>
+                    <p>Find and book sports venues easily</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="stadiums.html">Find Stadium</a></li>
+                        <li><a href="partner.html">Partner With Us</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Email: info@stadiumfinder.com</p>
+                    <p>Phone: +1 234 567 890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 StadiumFinder. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Booking details modal -->
+    <div class="modal" id="booking-details-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Booking Details</h2>
+            <div id="booking-details-content">
+                <!-- Details will be populated via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/main.js" type="module"></script>
+    <script src="./js/user-bookings.js" type="module"></script>
+</body>
+</html>

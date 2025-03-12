@@ -1,0 +1,200 @@
+/* Booking Page Styles */
+
+.booking-hero {
+    background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.8)), url('../images/booking-hero.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.booking-hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.booking-hero p {
+    font-size: 1.2rem;
+}
+
+.booking-section {
+    padding: 60px 0;
+    background-color: #f9f9f9;
+}
+
+.booking-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+.booking-stadium-details {
+    padding: 30px;
+    border-right: 1px solid #eee;
+}
+
+.stadium-preview {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.stadium-preview .stadium-image {
+    height: 250px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.stadium-preview .stadium-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stadium-preview .stadium-info h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: var(--secondary-color);
+}
+
+.stadium-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.stadium-meta span {
+    display: flex;
+    align-items: center;
+    color: #666;
+    font-size: 1rem;
+}
+
+.stadium-meta i {
+    color: var(--primary-color);
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+.stadium-price {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+    margin-top: 20px;
+}
+
+.booking-form-container {
+    padding: 30px;
+}
+
+.booking-form-container h3 {
+    margin-bottom: 20px;
+    color: var(--secondary-color);
+    font-size: 1.3rem;
+}
+
+.time-slots {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.time-slot {
+    border: 2px solid #eee;
+    padding: 10px;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.time-slot:hover {
+    border-color: var(--primary-color);
+    background-color: rgba(52, 152, 219, 0.05);
+}
+
+.time-slot.selected {
+    border-color: var(--primary-color);
+    background-color: rgba(52, 152, 219, 0.1);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.time-slot.booked {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #adb5bd;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.time-slot-loading {
+    grid-column: 1 / -1;
+    padding: 20px;
+    text-align: center;
+    color: #777;
+}
+
+.booking-summary {
+    margin: 30px 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+}
+
+.summary-item.total {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px solid #eee;
+}
+
+.book-btn {
+    padding: 15px;
+    font-size: 1.1rem;
+    margin-top: 20px;
+}
+
+@media (max-width: 992px) {
+    .booking-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .booking-stadium-details {
+        border-right: none;
+        border-bottom: 1px solid #eee;
+    }
+}
+
+@media (max-width: 768px) {
+    .time-slots {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .time-slots {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

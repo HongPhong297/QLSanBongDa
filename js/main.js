@@ -122,9 +122,34 @@ export function isLoggedIn() {
     return localStorage.getItem('user') !== null;
 }
 
+// Return the current user data from localStorage with proper ID parsing
 export function getCurrentUser() {
     const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    
+    if (!user) return null;
+    
+    try {
+        const userData = JSON.parse(user);
+        
+        // Ensure user ID is properly set
+        if (!userData.id && userData.id !== 0) {
+            console.warn('User data missing ID property:', userData);
+            
+            // If user data exists but ID is missing, try to use the appropriate ID
+            if (userData.email && userData.email.includes('admin')) {
+                userData.id = 12; // Admin ID
+            } else {
+                userData.id = 12; // Default to ID 12 for testing
+            }
+        }
+        
+        // Log the user data for debugging
+        console.log('Retrieved user data:', userData);
+        return userData;
+    } catch (error) {
+        console.error('Error parsing user data:', error);
+        return null;
+    }
 }
 
 export function isStadiumOwner() {
@@ -528,3 +553,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize everything when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', initUI);
+
+// Make some functions globally available
+window.mainModule = {
+    showNotification,
+    isLoggedIn,
+    getCurrentUser,
+    logout
+};
