@@ -145,75 +145,160 @@ export function logout() {
 
 // Update navigation based on user login status
 export function updateNavigation() {
-    const loginBtn = document.querySelector('a[href="login.html"]');
-    const registerBtn = document.querySelector('a[href="register.html"]');
-    
-    if (!loginBtn || !registerBtn) return; // Skip if elements don't exist
+    console.log("Updating navigation...");
     
     if (isLoggedIn()) {
+        console.log("User is logged in, updating navigation");
         const user = getCurrentUser();
-        const nav = document.getElementById('main-nav').querySelector('ul');
+        console.log("Current user:", user);
         
-        // Remove login/register buttons
-        loginBtn.parentNode.removeChild(loginBtn);
-        registerBtn.parentNode.removeChild(registerBtn);
+        // Try different possible navigation layouts
+        // First try standard main-nav structure
+        let navList = document.querySelector('#main-nav ul');
+        
+        // If not found, try alternative navigation structures (like in index.html)
+        if (!navList) {
+            navList = document.querySelector('.navigation');
+            if (!navList) {
+                navList = document.querySelector('header .auth');
+                if (!navList) {
+                    console.error("Navigation list not found in any expected location");
+                    return;
+                }
+            }
+        }
+        
+        // Find login/register buttons in various structures
+        const loginBtns = document.querySelectorAll('a[href="login.html"]');
+        const registerBtns = document.querySelectorAll('a[href="register.html"]');
+        
+        // Remove all login/register buttons
+        loginBtns.forEach(btn => {
+            if (btn.parentNode) {
+                if (btn.parentNode.tagName === 'LI') {
+                    btn.parentNode.remove(); // Remove the entire li if it's in a list
+                } else {
+                    btn.remove(); // Otherwise just remove the button
+                }
+            }
+        });
+        
+        registerBtns.forEach(btn => {
+            if (btn.parentNode) {
+                if (btn.parentNode.tagName === 'LI') {
+                    btn.parentNode.remove();
+                } else {
+                    btn.remove();
+                }
+            }
+        });
+
+        // Check if we already have a user dropdown
+        const existingDropdown = document.querySelector('.user-dropdown');
+        if (existingDropdown) {
+            console.log("User dropdown already exists, skipping");
+            return;
+        }
         
         // Create user dropdown
-        const li = document.createElement('li');
-        li.className = 'user-dropdown';
+        const userDropdown = document.createElement('div');
+        userDropdown.className = 'user-dropdown';
         
         // Create dropdown HTML with appropriate links based on user type
         if (isAdmin()) {
-            li.innerHTML = `
-                <a href="#" class="dropdown-toggle">${user.fullname} <i class="fas fa-chevron-down"></i></a>
+            userDropdown.innerHTML = `
+                <a href="#" class="dropdown-toggle">
+                    <div class="avatar">
+                        <span>${user.fullname.charAt(0)}</span>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">${user.fullname}</span>
+                        <span class="user-role">Administrator</span>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
                 <div class="dropdown-menu">
                     <a href="admin-dashboard.html"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
                     <a href="admin-users.html"><i class="fas fa-users"></i> Manage Users</a>
                     <a href="admin-stadiums.html"><i class="fas fa-futbol"></i> Manage Stadiums</a>
                     <a href="admin-bookings.html"><i class="fas fa-calendar-check"></i> Manage Bookings</a>
+                    <div class="dropdown-divider"></div>
                     <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             `;
         } else if (isStadiumOwner()) {
-            li.innerHTML = `
-                <a href="#" class="dropdown-toggle">${user.fullname} <i class="fas fa-chevron-down"></i></a>
+            userDropdown.innerHTML = `
+                <a href="#" class="dropdown-toggle">
+                    <div class="avatar">
+                        <span>${user.fullname.charAt(0)}</span>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">${user.fullname}</span>
+                        <span class="user-role">Stadium Owner</span>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
                 <div class="dropdown-menu">
                     <a href="owner-dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                     <a href="owner-stadiums.html"><i class="fas fa-futbol"></i> My Stadiums</a>
                     <a href="owner-bookings.html"><i class="fas fa-calendar-check"></i> Bookings</a>
                     <a href="owner-profile.html"><i class="fas fa-user"></i> Profile</a>
+                    <div class="dropdown-divider"></div>
                     <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             `;
         } else {
-            li.innerHTML = `
-                <a href="#" class="dropdown-toggle">${user.fullname} <i class="fas fa-chevron-down"></i></a>
+            userDropdown.innerHTML = `
+                <a href="#" class="dropdown-toggle">
+                    <div class="avatar">
+                        <span>${(user.fullname || user.email).charAt(0).toUpperCase()}</span>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">${user.fullname || user.email.split('@')[0]}</span>
+                        <span class="user-role">Member</span>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
                 <div class="dropdown-menu">
                     <a href="user-dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                     <a href="user-bookings.html"><i class="fas fa-calendar-check"></i> My Bookings</a>
                     <a href="user-profile.html"><i class="fas fa-user"></i> Profile</a>
+                    <div class="dropdown-divider"></div>
                     <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             `;
         }
         
-        nav.appendChild(li);
+        // Add the dropdown to the navigation
+        if (navList.tagName === 'UL') {
+            // Standard navigation
+            const li = document.createElement('li');
+            li.appendChild(userDropdown);
+            navList.appendChild(li);
+        } else {
+            // Custom navigation structure
+            navList.appendChild(userDropdown);
+        }
         
         // Add dropdown toggle functionality
-        const dropdownToggle = li.querySelector('.dropdown-toggle');
-        const dropdownMenu = li.querySelector('.dropdown-menu');
+        const dropdownToggle = userDropdown.querySelector('.dropdown-toggle');
+        const dropdownMenu = userDropdown.querySelector('.dropdown-menu');
         
-        dropdownToggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            dropdownMenu.classList.toggle('show');
-        });
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!li.contains(e.target) && dropdownMenu.classList.contains('show')) {
-                dropdownMenu.classList.remove('show');
-            }
-        });
+        if (dropdownToggle && dropdownMenu) {
+            dropdownToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                dropdownMenu.classList.toggle('show');
+                dropdownToggle.classList.toggle('active');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!userDropdown.contains(e.target) && dropdownMenu.classList.contains('show')) {
+                    dropdownMenu.classList.remove('show');
+                    dropdownToggle.classList.remove('active');
+                }
+            });
+        }
         
         // Add logout functionality
         const logoutBtn = document.getElementById('logout-btn');

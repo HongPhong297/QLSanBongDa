@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get form values
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
+        const remember = document.getElementById('remember').checked;
         
         // Basic validation
         if (!email || !password) {
@@ -41,51 +42,50 @@ document.addEventListener('DOMContentLoaded', function() {
         const loginBtn = document.querySelector('#login-form button[type="submit"]');
         const originalBtnText = loginBtn.textContent;
         loginBtn.disabled = true;
-        loginBtn.textContent = 'Logging in...';
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
         
         try {
-            // Send login request
-            const response = await fetch('http://localhost:3000/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ email, password })
-            });
+            // Simulate login API call
+            await simulateLogin(email, password);
             
-            // Parse response
-            const data = await response.json();
+            // Create user object and store in localStorage
+            const user = {
+                email: email,
+                fullname: email.split('@')[0], // Extract name from email as example
+                type: email.includes('owner') ? 'owner' : 'user',
+                isAdmin: email.includes('admin')
+            };
             
-            // Handle response
-            if (response.ok) {
-                // Login successful
-                showNotification('Login successful!', 'success');
-                
-                // Store user data in localStorage
-                localStorage.setItem('user', JSON.stringify(data.user));
-                localStorage.setItem('token', data.token);
-                
-                // Redirect based on user type
-                if (data.user.user_type === 'owner') {
-                    window.location.href = 'owner-dashboard.html';
-                } else if (data.user.is_admin) {
-                    window.location.href = 'admin-dashboard.html';
-                } else {
-                    window.location.href = 'index.html';
-                }
-            } else {
-                // Login failed
-                showError(data.error || 'Invalid email or password');
-            }
+            // Store in localStorage
+            localStorage.setItem('user', JSON.stringify(user));
+            
+            // Show success message
+            showNotification('Login successful! Redirecting...', 'success');
+            
+            // Redirect after a short delay
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+            
         } catch (error) {
-            console.error('Login error:', error);
-            showError('Network error. Please check your connection and try again.');
-        } finally {
-            // Reset button state
+            showError(error.message);
             loginBtn.disabled = false;
             loginBtn.textContent = originalBtnText;
         }
+    }
+    
+    // Simulate login API call
+    function simulateLogin(email, password) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                // Example validation - in a real app this would be server-side
+                if (password.length < 6) {
+                    reject(new Error('Invalid credentials'));
+                } else {
+                    resolve();
+                }
+            }, 1000);
+        });
     }
     
     // Initialize login functionality
