@@ -8,6 +8,7 @@ import {
     generateId 
 } from './main.js';
 import { getSafeImageUrl } from './imageLoader.js';
+import { createBooking } from './api-client.js';
 
 // DOM Elements
 const bookingForm = document.getElementById('booking-form');
@@ -91,46 +92,63 @@ async function initBookingPage() {
 async function fetchStadiumDetails(stadiumId) {
     console.log('Fetching details for stadium ID:', stadiumId);
     
-    // Simulate API call with stadium data
-    const simulatedStadiums = [
-        {
-            id: "1",
-            name: "San Van Dong A",
-            description: "San co chat luong cao",
-            location: "456 Duong XYZ, Quan 3",
-            district: "Quan 3",
-            price: "500000",
-            capacity: 100,
-            sport_type: "football",
-            image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000&auto=format&fit=crop"
-        },
-        {
-            id: "2",
-            name: "San Van Dong B",
-            description: "San nho phu hop cho nhom ban be",
-            location: "123 Duong ABC, Quan 1",
-            district: "Quan 1",
-            price: "350000",
-            capacity: 50,
-            sport_type: "basketball",
-            image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1000&auto=format&fit=crop"
-        },
-        {
-            id: "3",
-            name: "San Tennis Quan 7",
-            description: "San tennis chat luong cao",
-            location: "789 Duong DEF, Quan 7",
-            district: "Quan 7",
-            price: "200000",
-            capacity: 4,
-            sport_type: "tennis",
-            image: "https://images.unsplash.com/photo-1622279457486-7d08f1d33d66?q=80&w=1000&auto=format&fit=crop"
+    try {
+        // First, try to fetch stadium data from the API
+        console.log('Attempting to fetch stadium from API...');
+        const response = await fetch(`http://localhost:3000/api/stadiums/${stadiumId}`);
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Successfully fetched stadium data from API:', data);
+            stadium = data;
+        } else {
+            throw new Error(`API request failed with status ${response.status}`);
         }
-    ];
-    
-    // Find the stadium with matching ID
-    stadium = simulatedStadiums.find(s => s.id === stadiumId);
-    console.log('Found stadium:', stadium);
+    } catch (error) {
+        console.error('Error fetching stadium from API:', error);
+        console.log('Falling back to simulated data...');
+        
+        // Fallback to simulated data if API call fails
+        const simulatedStadiums = [
+            {
+                id: "1",
+                name: "San Van Dong A",
+                description: "San co chat luong cao",
+                location: "456 Duong XYZ, Quan 3",
+                district: "Quan 3",
+                price: "500000",
+                capacity: 100,
+                sport_type: "football",
+                image: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000&auto=format&fit=crop"
+            },
+            {
+                id: "2",
+                name: "San Van Dong B",
+                description: "San nho phu hop cho nhom ban be",
+                location: "123 Duong ABC, Quan 1",
+                district: "Quan 1",
+                price: "350000",
+                capacity: 50,
+                sport_type: "basketball",
+                image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1000&auto=format&fit=crop"
+            },
+            {
+                id: "3",
+                name: "San Tennis Quan 7",
+                description: "San tennis chat luong cao",
+                location: "789 Duong DEF, Quan 7",
+                district: "Quan 7",
+                price: "200000",
+                capacity: 4,
+                sport_type: "tennis",
+                image: "https://images.unsplash.com/photo-1622279457486-7d08f1d33d66?q=80&w=1000&auto=format&fit=crop"
+            }
+        ];
+        
+        // Find the stadium with matching ID
+        stadium = simulatedStadiums.find(s => s.id === stadiumId);
+        console.log('Using fallback data for stadium:', stadium);
+    }
     
     if (!stadium) {
         console.error('Stadium not found for ID:', stadiumId);
@@ -356,7 +374,7 @@ function calculateEndTime(startTime, durationHours) {
 async function handleBookingSubmit(e) {
     e.preventDefault();
     console.log('Processing booking submission');
-    
+    const API_BASE_URL = 'http://localhost:3000/api';
     if (!selectedDate || !selectedTimeSlot) {
         showNotification('Please select date and time', 'error');
         return;
@@ -364,14 +382,29 @@ async function handleBookingSubmit(e) {
     
     // Get user information from the current user data
     const user = getCurrentUser();
+    console.log('User data for booking:', user);
     
-    if (!user || !user.id) {
-        console.error('User ID not found in getCurrentUser():', user);
+    if (!user) {
         showNotification('User information missing. Please log in again.', 'error');
         return;
     }
     
-    console.log('Current user ID:', user.id);
+    // Kiểm tra ID người dùng kỹ lưỡng hơn
+    let userId = null;
+    if (user.id !== undefined) {
+        userId = parseInt(user.id);
+        if (isNaN(userId)) {
+            console.error('Invalid user ID:', user.id);
+            showNotification('Invalid user ID. Please log in again.', 'error');
+            return;
+        }
+    } else {
+        console.error('User ID is missing:', user);
+        showNotification('User ID is missing. Please log in again.', 'error');
+        return;
+    }
+    
+    console.log('Validated user ID for booking:', userId);
     
     const customerName = user.fullname || '';
     const customerEmail = user.email || '';
@@ -383,85 +416,88 @@ async function handleBookingSubmit(e) {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
     
     try {
+        // Ensure API base URL is defined correctly
+        if (!API_BASE_URL) {
+            console.error('API_BASE_URL is not defined');
+            throw new Error('API configuration error');
+        }
+        
         // Calculate end time based on start time and duration
         const endTime = calculateEndTime(selectedTimeSlot, selectedDuration);
+        const totalPrice = hourlyRate * selectedDuration;
         
-        // Create booking data object to send to API
+        // Use parseInt with a radix
+        const stadiumId = parseInt(stadium.id, 10);
+        if (isNaN(stadiumId)) {
+            throw new Error('Invalid stadium ID');
+        }
+        
+        // Create booking data object with proper number types where needed
         const bookingData = {
-            stadium_id: parseInt(stadium.id),
-            user_id: parseInt(user.id), // Ensure user ID is properly parsed as integer
+            stadium_id: stadiumId,
+            user_id: userId,
             booking_date: selectedDate,
             start_time: selectedTimeSlot,
             end_time: endTime,
-            total_price: hourlyRate * selectedDuration,
-            customer_name: customerName,
-            customer_email: customerEmail,
-            customer_phone: customerPhone
+            total_price: totalPrice,
+            customer_name: customerName || 'Guest',  // Ensure not empty
+            customer_email: customerEmail || 'guest@example.com',  // Ensure not empty
+            customer_phone: customerPhone || '0000000000',
+            notes: `Booking for ${stadium.name} - Duration: ${selectedDuration} hours`,
+            payment_method: 'online'
         };
         
-        console.log('Sending booking data to API with user ID:', bookingData.user_id);
+        console.log('Booking data to send:', bookingData);
         
-        let apiSuccess = false;
+        // Use the API client to create the booking
+        const result = await createBooking(bookingData);
         
-        try {
-            // Try to make API call to create booking
-            const response = await fetch('http://localhost:3000/api/bookings', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(bookingData)
-            });
-            
-            if (!response.ok) {
-                const errorData = await response.text();
-                console.error('API response error:', errorData);
-                throw new Error('Failed to create booking via API. Using fallback method.');
-            }
-            
-            const bookingResult = await response.json();
-            console.log('Booking created successfully via API:', bookingResult);
-            apiSuccess = true;
-        } catch (apiError) {
-            console.warn('API booking failed, using local storage fallback:', apiError);
-            // Continue with local storage approach
+        if (!result.success) {
+            console.error('Booking API error:', result);
+            throw new Error(result.error || 'Failed to create booking');
         }
         
-        // For demonstration purposes, always store in localStorage
+        console.log('Booking created successfully:', result.data);
+        
+        // Store booking in localStorage for redundancy
         const bookingForLocalStorage = {
-            id: generateId(),
-            stadium_id: stadium.id,
+            id: result.data.booking?.id || generateId(),
+            stadium_id: stadiumId,
             stadium_name: stadium.name,
-            user_id: user.id.toString(), // Ensure consistent user ID in localStorage
-            user_name: customerName,
-            date: selectedDate,
-            time: selectedTimeSlot,
+            user_id: userId,
+            booking_date: selectedDate,
+            start_time: selectedTimeSlot,
+            end_time: endTime,
             duration: selectedDuration,
-            price: hourlyRate * selectedDuration,
-            status: 'confirmed',
-            created_at: new Date().toISOString()
+            total_price: totalPrice,
+            price: hourlyRate,
+            customer_name: customerName || 'Guest',
+            customer_email: customerEmail || 'guest@example.com',
+            customer_phone: customerPhone || '0000000000',
+            status: result.data.booking?.status || 'confirmed',
+            created_at: new Date().toISOString(),
+            sport_type: stadium.sport_type || ''
         };
         
-        const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-        bookings.push(bookingForLocalStorage);
-        localStorage.setItem('bookings', JSON.stringify(bookings));
+        const existingBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+        existingBookings.push(bookingForLocalStorage);
+        localStorage.setItem('bookings', JSON.stringify(existingBookings));
         
-        // IMPORTANT: Set a flag in localStorage to indicate pending confirmation
-        // This ensures the success message will show even if the redirect fails
+        // Set flag for confirmation
         localStorage.setItem('pendingBookingConfirmation', 'true');
         
-        // Show a notification on this page first before redirecting
+        // Show success notification
         showNotification('Booking successful! Redirecting...', 'success');
         
-        // Redirect to index page with success parameter
+        // Redirect to bookings page
         setTimeout(() => {
-            window.location.href = 'index.html?booking=success';
+            window.location.href = 'user-bookings.html?booking=success';
         }, 2000);
-        
     } catch (error) {
         console.error('Error processing booking:', error);
         showNotification(`Booking error: ${error.message}`, 'error');
+        
+        // Re-enable the submit button
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<i class="fas fa-calendar-check"></i> Complete Booking';
     }

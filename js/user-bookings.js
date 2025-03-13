@@ -9,6 +9,7 @@ import {
     formatCurrency 
 } from './main.js';
 import { getSafeImageUrl } from './imageLoader.js';
+import { getUserBookings, updateBooking } from './api-client.js';
 
 // DOM Elements
 const bookingsLoading = document.getElementById('bookings-loading');
@@ -39,6 +40,7 @@ const sportTypeImages = {
 
 // Initialize bookings page
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Bookings page initialized');
     // Check if user is logged in
     if (!isLoggedIn()) {
         showNotification('Please login to view your bookings', 'warning');
@@ -119,47 +121,105 @@ async function fetchUserBookings() {
         const user = getCurrentUser();
         if (!user) throw new Error('User not found');
         
+        // Get user ID (ensuring it's a number)
+        const userId = parseInt(user.id);
+        console.log('Fetching bookings for user ID:', userId);
+        
         // Show loading
         if (bookingsLoading) bookingsLoading.style.display = 'block';
         
-        // Try to fetch from API
-        try {
-            const response = await fetch(`http://localhost:3000/api/bookings/user/${user.id}`);
+        // Use our API client to get bookings
+        const result = await getUserBookings(userId);
+        
+        if (!result.success) {
+            console.warn('API fetch failed:', result.error);
+            throw new Error(result.error);
+        }
+        
+        // Set bookings from API response
+        bookings = result.data || [];
+        console.log('Fetched bookings from API:', bookings.length, 'bookings found');
+        
+        // If API returns an empty array, try localStorage as backup
+        if (!bookings.length) {
+            console.log('No bookings found in API, checking localStorage...');
             
-            if (!response.ok) {
-                throw new Error(`API request failed with status ${response.status}`);
-            }
-            
-            const data = await response.json();
-            bookings = data;
-            console.log('Fetched bookings from API:', bookings);
-        } catch (apiError) {
-            console.log('API fetch failed, using localStorage fallback:', apiError);
-            
-            // Fall back to localStorage
+            // Get all bookings from localStorage
             const allBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            bookings = allBookings.filter(booking => 
-                booking.user_id === user.id.toString() || 
-                booking.user_id === parseInt(user.id) ||
-                booking.user_email === user.email
-            );
+            console.log('All bookings in localStorage:', allBookings.length, 'bookings found');
+            
+            // Filter bookings for current user
+            bookings = allBookings.filter(booking => {
+                // Convert IDs to string for consistent comparison
+                return String(booking.user_id) === String(userId);
+            });
+            
+            console.log('Filtered bookings from localStorage:', bookings.length, 'bookings found');
         }
         
         // Hide loading
         if (bookingsLoading) bookingsLoading.style.display = 'none';
         
-        // Apply initial filter and render
-        applyFiltersAndRender();
+        // Check if we have any bookings after API or localStorage retrieval
+        if (bookings.length === 0) {
+            console.log('No bookings found for current user');
+            if (noBookingsEl) {
+                noBookingsEl.style.display = 'block';
+                noBookingsEl.innerHTML = `
+                    <div class="no-bookings-message">
+                        <i class="fas fa-calendar-times"></i>
+                        <h3>No Bookings Found</h3>
+                        <p>You haven't made any bookings yet. Explore stadiums and make your first booking!</p>
+                        <a href="stadiums.html" class="btn btn-primary">Find Stadiums</a>
+                    </div>
+                `;
+            }
+        } else {
+            console.log('Bookings found, rendering to UI');
+            // Apply filters and render if we have bookings
+            applyFiltersAndRender();
+        }
         
     } catch (error) {
         console.error('Error fetching bookings:', error);
-        showNotification('Error loading bookings', 'error');
+        
+        // Try fetching from localStorage as fallback
+        console.log('Trying localStorage fallback...');
+        
+        const allBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+        const userId = String(getCurrentUser()?.id);
+        
+        // Filter to only show current user's bookings
+        bookings = allBookings.filter(booking => String(booking.user_id) === userId);
+        
+        console.log('Found', bookings.length, 'bookings in localStorage');
         
         // Hide loading
         if (bookingsLoading) bookingsLoading.style.display = 'none';
         
-        // Show no bookings message on error
-        if (noBookingsEl) noBookingsEl.style.display = 'block';
+        if (bookings.length === 0) {
+            if (noBookingsEl) {
+                noBookingsEl.style.display = 'block';
+                noBookingsEl.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error Loading Bookings</h3>
+                        <p>${error.message}</p>
+                        <button id="retry-loading" class="btn btn-primary">Retry</button>
+                    </div>
+                `;
+                
+                // Add retry button functionality
+                const retryBtn = document.getElementById('retry-loading');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', fetchUserBookings);
+                }
+            }
+        } else {
+            // We found some bookings in localStorage, so render them
+            applyFiltersAndRender();
+            showNotification('Showing bookings from offline storage. Some data might not be up to date.', 'warning');
+        }
     }
 }
 
@@ -208,10 +268,18 @@ function applyFiltersAndRender() {
             });
             break;
         case 'price-desc':
-            filteredBookings.sort((a, b) => b.total_price - a.total_price);
+            filteredBookings.sort((a, b) => {
+                const priceA = parseFloat(b.total_price || b.price || 0);
+                const priceB = parseFloat(a.total_price || a.price || 0);
+                return priceA - priceB;
+            });
             break;
         case 'price-asc':
-            filteredBookings.sort((a, b) => a.total_price - b.total_price);
+            filteredBookings.sort((a, b) => {
+                const priceA = parseFloat(a.total_price || a.price || 0);
+                const priceB = parseFloat(b.total_price || b.price || 0);
+                return priceA - priceB;
+            });
             break;
         case 'date-desc':
         default:
@@ -411,23 +479,21 @@ async function cancelBooking(bookingId) {
     if (!confirm('Are you sure you want to cancel this booking?')) return;
     
     try {
-        // Try to cancel via API
-        try {
-            const response = await fetch(`http://localhost:3000/api/bookings/${bookingId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ status: 'cancelled' })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Failed to cancel booking: ${response.status}`);
-            }
-            
+        // Use the API client to update the booking
+        const result = await updateBooking(bookingId, { status: 'cancelled' });
+        
+        if (result.success) {
             showNotification('Booking cancelled successfully', 'success');
-        } catch (apiError) {
-            console.warn('API cancel failed, using localStorage fallback:', apiError);
+            
+            // Update local state
+            bookings = bookings.map(booking => {
+                if (booking.id.toString() === bookingId.toString()) {
+                    return { ...booking, status: 'cancelled' };
+                }
+                return booking;
+            });
+        } else {
+            console.warn('API cancel failed, using localStorage fallback:', result.error);
             
             // Fallback to localStorage
             const storedBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
@@ -440,21 +506,21 @@ async function cancelBooking(bookingId) {
             
             localStorage.setItem('bookings', JSON.stringify(updatedBookings));
             showNotification('Booking cancelled successfully (offline mode)', 'success');
+            
+            // Update local state
+            bookings = bookings.map(booking => {
+                if (booking.id.toString() === bookingId.toString()) {
+                    return { ...booking, status: 'cancelled' };
+                }
+                return booking;
+            });
         }
-        
-        // Update local state
-        bookings = bookings.map(booking => {
-            if (booking.id.toString() === bookingId.toString()) {
-                return { ...booking, status: 'cancelled' };
-            }
-            return booking;
-        });
         
         // Re-apply filters and render
         applyFiltersAndRender();
         
     } catch (error) {
         console.error('Error cancelling booking:', error);
-        showNotification('Failed to cancel booking', 'error');
+        showNotification('Failed to cancel booking: ' + error.message, 'error');
     }
 }
