@@ -1,4 +1,4 @@
-// User bookings management functionality
+// User bookings management functionality - Standalone version
 
 import { 
     showNotification, 
@@ -9,7 +9,7 @@ import {
     formatCurrency 
 } from './main.js';
 import { getSafeImageUrl } from './imageLoader.js';
-import { getUserBookings, updateBooking } from './api-client.js';
+// Instead of importing from api-client.js, we'll define the functions here
 
 // DOM Elements
 const bookingsLoading = document.getElementById('bookings-loading');
@@ -29,8 +29,9 @@ let filteredBookings = [];
 let currentFilter = 'all';
 let searchTerm = '';
 let sortBy = 'date-desc';
+const API_BASE_URL = 'http://localhost:3000/api';
 
-// Stadium images map for demo purposes
+// Stadium images map based on sport type
 const sportTypeImages = {
     'football': 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2',
     'basketball': 'https://images.unsplash.com/photo-1546519638-68e109498ffc',
@@ -41,6 +42,7 @@ const sportTypeImages = {
 // Initialize bookings page
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Bookings page initialized');
+    
     // Check if user is logged in
     if (!isLoggedIn()) {
         showNotification('Please login to view your bookings', 'warning');
@@ -128,20 +130,41 @@ async function fetchUserBookings() {
         // Show loading
         if (bookingsLoading) bookingsLoading.style.display = 'block';
         
-        // Use our API client to get bookings
-        const result = await getUserBookings(userId);
+        // Get authentication token from localStorage
+        const token = localStorage.getItem('token');
         
-        if (!result.success) {
-            console.warn('API fetch failed:', result.error);
-            throw new Error(result.error);
+        // Add token to headers if available
+        const headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+        
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+            console.log('Including auth token in request');
+        } else {
+            console.warn('No authentication token found');
         }
         
-        // Set bookings from API response
-        bookings = result.data || [];
-        console.log('Fetched bookings from API:', bookings.length, 'bookings found');
+        // Fetch bookings directly from API
+        const response = await fetch(`${API_BASE_URL}/bookings/user/${userId}`, {
+            method: 'GET',
+            headers: headers
+        });
         
-        // If API returns an empty array, try localStorage as backup
-        if (!bookings.length) {
+        console.log('API response status:', response.status);
+        
+        // Check if response is ok
+        if (!response.ok) {
+            throw new Error(`Failed to fetch bookings: ${response.status}`);
+        }
+        
+        // Parse response
+        bookings = await response.json();
+        console.log('Fetched bookings from API:', bookings);
+        
+        // If API returns an empty array or failed, check localStorage as backup
+        if (!bookings || bookings.length === 0) {
             console.log('No bookings found in API, checking localStorage...');
             
             // Get all bookings from localStorage
@@ -150,7 +173,6 @@ async function fetchUserBookings() {
             
             // Filter bookings for current user
             bookings = allBookings.filter(booking => {
-                // Convert IDs to string for consistent comparison
                 return String(booking.user_id) === String(userId);
             });
             
@@ -161,7 +183,7 @@ async function fetchUserBookings() {
         if (bookingsLoading) bookingsLoading.style.display = 'none';
         
         // Check if we have any bookings after API or localStorage retrieval
-        if (bookings.length === 0) {
+        if (!bookings || bookings.length === 0) {
             console.log('No bookings found for current user');
             if (noBookingsEl) {
                 noBookingsEl.style.display = 'block';
@@ -225,17 +247,22 @@ async function fetchUserBookings() {
 
 // Apply filters and sort
 function applyFiltersAndRender() {
+    if (!bookings || !Array.isArray(bookings)) {
+        console.error('Invalid bookings data:', bookings);
+        bookings = [];
+    }
+    
     // Apply filter
     switch (currentFilter) {
         case 'upcoming':
             filteredBookings = bookings.filter(booking => {
-                const bookingDate = new Date(`${booking.booking_date || booking.date} ${booking.start_time || booking.time}`);
+                const bookingDate = new Date(`${booking.booking_date || booking.date} ${booking.start_time || booking.time || '00:00'}`);
                 return bookingDate > new Date() && booking.status !== 'cancelled';
             });
             break;
         case 'past':
             filteredBookings = bookings.filter(booking => {
-                const bookingDate = new Date(`${booking.booking_date || booking.date} ${booking.start_time || booking.time}`);
+                const bookingDate = new Date(`${booking.booking_date || booking.date} ${booking.start_time || booking.time || '00:00'}`);
                 return bookingDate < new Date() && booking.status !== 'cancelled';
             });
             break;
@@ -262,16 +289,16 @@ function applyFiltersAndRender() {
     switch (sortBy) {
         case 'date-asc':
             filteredBookings.sort((a, b) => {
-                const dateA = new Date(a.booking_date || a.date);
-                const dateB = new Date(b.booking_date || b.date);
+                const dateA = new Date(a.booking_date || a.date || '2000-01-01');
+                const dateB = new Date(b.booking_date || b.date || '2000-01-01');
                 return dateA - dateB;
             });
             break;
         case 'price-desc':
             filteredBookings.sort((a, b) => {
-                const priceA = parseFloat(b.total_price || b.price || 0);
-                const priceB = parseFloat(a.total_price || a.price || 0);
-                return priceA - priceB;
+                const priceA = parseFloat(a.total_price || a.price || 0);
+                const priceB = parseFloat(b.total_price || b.price || 0);
+                return priceB - priceA;
             });
             break;
         case 'price-asc':
@@ -284,8 +311,8 @@ function applyFiltersAndRender() {
         case 'date-desc':
         default:
             filteredBookings.sort((a, b) => {
-                const dateA = new Date(a.booking_date || a.date);
-                const dateB = new Date(b.booking_date || b.date);
+                const dateA = new Date(a.booking_date || a.date || '2000-01-01');
+                const dateB = new Date(b.booking_date || b.date || '2000-01-01');
                 return dateB - dateA;
             });
             break;
@@ -313,9 +340,18 @@ function renderBookings() {
     let html = '';
     
     filteredBookings.forEach(booking => {
-        // Format booking date
-        const bookingDate = formatDate(booking.booking_date || booking.date);
-        const bookingTime = formatTime(booking.start_time || booking.time);
+        // Format booking date - handle possible undefined values safely
+        const bookingDate = formatDate(booking.booking_date || booking.date || new Date().toISOString().split('T')[0]);
+        const startTime = formatTime(booking.start_time || booking.time || '00:00');
+        
+        // Calculate end time if needed
+        let endTime = booking.end_time ? formatTime(booking.end_time) : '';
+        if (!endTime && (booking.duration || booking.start_time)) {
+            const duration = parseInt(booking.duration || 1);
+            const [hours, minutes] = (booking.start_time || '00:00').split(':').map(Number);
+            const endHours = hours + duration;
+            endTime = `${String(endHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+        }
         
         // Determine status class
         let statusClass = 'status-pending';
@@ -344,7 +380,7 @@ function renderBookings() {
                     <h3>${booking.stadium_name || 'Stadium'}</h3>
                     <div class="booking-meta">
                         <span><i class="fas fa-calendar"></i> ${bookingDate}</span>
-                        <span><i class="fas fa-clock"></i> ${bookingTime}</span>
+                        <span><i class="fas fa-clock"></i> ${startTime}${endTime ? ' - ' + endTime : ''}</span>
                         <span><i class="fas fa-hourglass-half"></i> ${booking.duration || 1} hour${booking.duration > 1 ? 's' : ''}</span>
                         <span><i class="fas fa-money-bill-wave"></i> ${formatCurrency(booking.total_price || booking.price || 0)}</span>
                     </div>
@@ -390,15 +426,21 @@ function renderBookings() {
 // Show booking details in modal
 function showBookingDetails(bookingId) {
     // Find the booking
-    const booking = bookings.find(b => b.id.toString() === bookingId.toString());
+    const booking = bookings.find(b => String(b.id) === String(bookingId));
     
     if (!booking || !modal || !modalContent) return;
     
     // Format data
-    const bookingDate = formatDate(booking.booking_date || booking.date);
-    const startTime = formatTime(booking.start_time || booking.time);
-    const endTime = booking.end_time ? formatTime(booking.end_time) : 
-                   calculateEndTime(booking.start_time || booking.time, booking.duration);
+    const bookingDate = formatDate(booking.booking_date || booking.date || new Date().toISOString().split('T')[0]);
+    const startTime = formatTime(booking.start_time || booking.time || '00:00');
+    let endTime = booking.end_time ? formatTime(booking.end_time) : '';
+    
+    if (!endTime && (booking.duration || booking.start_time)) {
+        const duration = parseInt(booking.duration || 1);
+        const [hours, minutes] = (booking.start_time || '00:00').split(':').map(Number);
+        const endHours = hours + duration;
+        endTime = `${String(endHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    }
     
     // Determine status class
     let statusClass = 'status-pending';
@@ -427,7 +469,7 @@ function showBookingDetails(bookingId) {
         </div>
         <div class="booking-detail-row">
             <div class="booking-detail-label">Time:</div>
-            <div class="booking-detail-value">${startTime} - ${endTime}</div>
+            <div class="booking-detail-value">${startTime}${endTime ? ' - ' + endTime : ''}</div>
         </div>
         <div class="booking-detail-row">
             <div class="booking-detail-label">Duration:</div>
@@ -464,63 +506,81 @@ function showBookingDetails(bookingId) {
     }
 }
 
-// Calculate end time based on start time and duration
-function calculateEndTime(startTime, duration) {
-    if (!startTime) return 'N/A';
-    
-    const [hours, minutes] = startTime.split(':').map(Number);
-    const endHours = hours + (parseInt(duration) || 1);
-    
-    return `${String(endHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-}
-
 // Cancel booking
 async function cancelBooking(bookingId) {
     if (!confirm('Are you sure you want to cancel this booking?')) return;
     
     try {
-        // Use the API client to update the booking
-        const result = await updateBooking(bookingId, { status: 'cancelled' });
+        // Get authentication token from localStorage
+        const token = localStorage.getItem('token');
         
-        if (result.success) {
-            showNotification('Booking cancelled successfully', 'success');
-            
-            // Update local state
-            bookings = bookings.map(booking => {
-                if (booking.id.toString() === bookingId.toString()) {
-                    return { ...booking, status: 'cancelled' };
-                }
-                return booking;
-            });
+        // Add token to headers if available
+        const headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+        
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+            console.log('Including auth token in cancel request');
         } else {
-            console.warn('API cancel failed, using localStorage fallback:', result.error);
-            
-            // Fallback to localStorage
-            const storedBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-            const updatedBookings = storedBookings.map(booking => {
-                if (booking.id.toString() === bookingId.toString()) {
-                    return { ...booking, status: 'cancelled' };
-                }
-                return booking;
-            });
-            
-            localStorage.setItem('bookings', JSON.stringify(updatedBookings));
-            showNotification('Booking cancelled successfully (offline mode)', 'success');
-            
-            // Update local state
-            bookings = bookings.map(booking => {
-                if (booking.id.toString() === bookingId.toString()) {
-                    return { ...booking, status: 'cancelled' };
-                }
-                return booking;
-            });
+            console.warn('No authentication token found for cancel request');
         }
+        
+        // Call the API endpoint to update booking
+        const response = await fetch(`${API_BASE_URL}/bookings/${bookingId}`, {
+            method: 'PATCH',
+            headers: headers,
+            body: JSON.stringify({ status: 'cancelled' })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Failed to cancel booking: ${response.status}`);
+        }
+        
+        showNotification('Booking cancelled successfully', 'success');
+        
+        // Update local state
+        bookings = bookings.map(booking => {
+            if (String(booking.id) === String(bookingId)) {
+                return { ...booking, status: 'cancelled' };
+            }
+            return booking;
+        });
         
         // Re-apply filters and render
         applyFiltersAndRender();
         
     } catch (error) {
         console.error('Error cancelling booking:', error);
-        showNotification('Failed to cancel booking: ' + error.message, 'error');
+        
+        // Fallback to localStorage if API call fails
+        try {
+            // Update in localStorage as fallback
+            const allBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+            const updatedBookings = allBookings.map(booking => {
+                if (String(booking.id) === String(bookingId)) {
+                    return { ...booking, status: 'cancelled' };
+                }
+                return booking;
+            });
+            
+            localStorage.setItem('bookings', JSON.stringify(updatedBookings));
+            
+            // Update local state
+            bookings = bookings.map(booking => {
+                if (String(booking.id) === String(bookingId)) {
+                    return { ...booking, status: 'cancelled' };
+                }
+                return booking;
+            });
+            
+            showNotification('Booking cancelled successfully (offline mode)', 'success');
+            
+            // Re-apply filters and render
+            applyFiltersAndRender();
+        } catch (fallbackError) {
+            showNotification('Failed to cancel booking: ' + error.message, 'error');
+        }
     }
 }
